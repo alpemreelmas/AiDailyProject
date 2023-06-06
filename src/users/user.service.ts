@@ -1,49 +1,60 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { InjectModel } from '@nestjs/mongoose';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './entities/user.schema';
-import { Model } from 'mongoose';
-import { ObjectId } from 'mongodb';
+import { Model, Types, Connection } from 'mongoose';
 import * as bcrypt from 'bcrypt';
+import { transaction } from '../helpers/transaction.helper';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User.name) private UserModel: Model<UserDocument>) {}
+  constructor(
+    @InjectConnection() private readonly connection: Connection,
+    @InjectModel(User.name) private UserModel: Model<UserDocument>,
+  ) {}
+
   async create(createUserDto: CreateUserDto) {
-    if (
-      (await this.UserModel.find({ email: createUserDto.email }).count()) > 0
-    ) {
-      throw new BadRequestException('Already this user exist.');
-    }
-    const createdUser = new this.UserModel(createUserDto);
-    createdUser.password = bcrypt.hashSync(createUserDto.password, 10);
-    return createdUser.save();
+    return transaction(this.connection, async (session) => {
+      if (
+        (await this.UserModel.find({ email: createUserDto.email }).count()) > 0
+      ) {
+        throw new BadRequestException('Already this user exist.');
+      }
+      const createdUser = new this.UserModel(createUserDto);
+      createdUser.password = bcrypt.hashSync(createUserDto.password, 10);
+      return createdUser.save({ session });
+    });
   }
 
   findAll() {
-    return this.UserModel.find();
+    return transaction(this.connection, (session) => this.UserModel.find());
   }
 
-  findOne(id: string) {
-    const objectId = new ObjectId(id);
-    return this.UserModel.findOne({ _id: objectId });
+  findById(id: Types.ObjectId) {
+    return transaction(this.connection, (session) =>
+      this.UserModel.findById(id),
+    );
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
-    const objectId = new ObjectId(id);
-    if (updateUserDto.password) {
-      updateUserDto.password = bcrypt.hashSync(updateUserDto.password, 10);
-    }
-    return this.UserModel.findOneAndUpdate({ _id: objectId }, updateUserDto);
+  update(id: Types.ObjectId, updateUserDto: UpdateUserDto) {
+    return transaction(this.connection, (session) => {
+      if (updateUserDto.password) {
+        updateUserDto.password = bcrypt.hashSync(updateUserDto.password, 10);
+      }
+      return this.UserModel.findByIdAndUpdate(id, updateUserDto);
+    });
   }
 
-  remove(id: string) {
-    const objectId = new ObjectId(id);
-    return this.UserModel.findOneAndDelete({ _id: objectId });
+  remove(id: Types.ObjectId) {
+    return transaction(this.connection, (session) =>
+      this.UserModel.findByIdAndDelete(id),
+    );
   }
 
   findByQuery(obj: any): Promise<any> {
-    return this.UserModel.findOne(obj);
+    return transaction(this.connection, (session) =>
+      this.UserModel.findOne(obj),
+    );
   }
 }

@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpCode
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Types } from 'mongoose';
 
 @Controller('users')
 export class UserController {
@@ -20,17 +21,20 @@ export class UserController {
 
   @HttpCode(HttpStatus.OK)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.UserService.findOne(id);
+  findOne(@Param('id') id: Types.ObjectId) {
+    return this.UserService.findById(id);
   }
   @HttpCode(HttpStatus.OK)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateUserDto) {
+  update(
+    @Param('id') id: Types.ObjectId,
+    @Body() updateAuthDto: UpdateUserDto,
+  ) {
     return this.UserService.update(id, updateAuthDto);
   }
   @HttpCode(HttpStatus.OK)
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: Types.ObjectId) {
     return this.UserService.remove(id);
   }
 }
