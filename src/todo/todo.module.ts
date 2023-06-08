@@ -10,6 +10,5 @@ import { Todo, TodoSchema } from './entities/todo.schema';
   ],
   controllers: [TodoController],
   providers: [TodoService],
-  exports: [TodoService, MongooseModule],
 })
 export class TodoModule {}
