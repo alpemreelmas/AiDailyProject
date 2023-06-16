@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module } from "@nestjs/common";
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './users/user.module';
@@ -10,7 +10,7 @@ import { AuthController } from './auth/auth.controller';
 import { UserController } from './users/user.controller';
 import { UserService } from './users/user.service';
 import { TodoModule } from './todo/todo.module';
-import { RequestLoggerMiddleware } from "./middlewares/request-logger.middleware";
+import { RequestLoggerMiddleware } from './middlewares/request-logger.middleware';
 
 @Module({
   imports: [
