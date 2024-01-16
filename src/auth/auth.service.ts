@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -13,7 +14,8 @@ import { AuthToken, AuthTokenDocument } from './entities/auth_token.schema';
 import * as moment from 'moment';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh_token.dto';
-import { User } from '../users/entities/user.schema';
+import { User, UserDocument } from '../users/entities/user.schema';
+import { RegisterDto } from './dto/register.dto';
 
 @Injectable()
 export class AuthService {
@@ -22,12 +24,14 @@ export class AuthService {
     private AuthTokenModel: Model<AuthTokenDocument>,
     private userService: UserService,
     private jwtService: JwtService,
+    @InjectModel(User.name)
+    private UserModel: Model<UserDocument>,
   ) {}
 
   async login(loginDto: LoginDto): Promise<any> {
     const user = await this.userService.findByQuery({ email: loginDto.email });
     if (!user) {
-      throw new NotFoundException(
+      throw new BadRequestException(
         "We couldn't find this credentials in our system",
       );
     }
@@ -44,6 +48,34 @@ export class AuthService {
       refresh_token: hashedRefreshToken,
     };
   }
+
+  async register(registerDto: RegisterDto): Promise<any> {
+    const userIfExist = await this.userService.findByQuery({
+      email: registerDto.email,
+    });
+    if (userIfExist) {
+      throw new BadRequestException('This email already exist.');
+    }
+
+    const hashedPass = bcrypt.hashSync(registerDto.password, 10);
+
+    const user = await this.UserModel.create({
+      name: registerDto.name,
+      email: registerDto.email,
+      password: hashedPass,
+    });
+
+    const newUser = { sub: user._id, name: user.name, email: user.email };
+    const hashedRefreshToken = await this.createRefreshToken(user._id);
+    return {
+      ...newUser,
+      access_token: await this.jwtService.signAsync(newUser, {
+        secret: process.env.JWT_SECRET_KEY,
+      }),
+      refresh_token: hashedRefreshToken,
+    };
+  }
+
   // TODO: Change here to jwt token
   async createRefreshToken(user: Types.ObjectId) {
     const refreshToken = await bcrypt.hashSync(uuidv4(), 10);

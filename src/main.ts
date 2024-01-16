@@ -4,7 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { ResponseInterceptor } from './interceptors/response.interceptor';
 import { AllExceptionFilter } from './filters/error.filter';
 import { WinstonModule } from 'nest-winston';
-import { format, Logger, transports } from "winston";
+import { format, Logger, transports } from 'winston';
 import DailyRotateFile = require('winston-daily-rotate-file');
 
 async function bootstrap() {

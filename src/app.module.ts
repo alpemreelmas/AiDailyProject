@@ -9,7 +9,6 @@ import { AuthModule } from './auth/auth.module';
 import { AuthController } from './auth/auth.controller';
 import { UserController } from './users/user.controller';
 import { UserService } from './users/user.service';
-import { TodoModule } from './todo/todo.module';
 import { RequestLoggerMiddleware } from './middlewares/request-logger.middleware';
 
 @Module({
@@ -18,7 +17,6 @@ import { RequestLoggerMiddleware } from './middlewares/request-logger.middleware
     MongooseModule.forRoot(process.env.MONGODB_URI),
     UserModule,
     AuthModule,
-    TodoModule,
   ],
   controllers: [AppController, AuthController, UserController],
   providers: [AppService, AuthService, UserService],
