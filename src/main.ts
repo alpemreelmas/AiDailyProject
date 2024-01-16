@@ -5,6 +5,7 @@ import { ResponseInterceptor } from './interceptors/response.interceptor';
 import { AllExceptionFilter } from './filters/error.filter';
 import { WinstonModule } from 'nest-winston';
 import { format, Logger, transports } from 'winston';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import DailyRotateFile = require('winston-daily-rotate-file');
 
 async function bootstrap() {
@@ -41,6 +42,16 @@ async function bootstrap() {
       ],
     }),
   });
+
+  const config = new DocumentBuilder()
+    .setTitle('AiDailyProject')
+    .setDescription('')
+    .setVersion('1.0')
+    .addTag('')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
+
   app.useGlobalInterceptors(new ResponseInterceptor());
   app.useGlobalFilters(new AllExceptionFilter());
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
