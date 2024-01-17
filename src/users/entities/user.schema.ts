@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, SchemaTypes, Types } from 'mongoose';
 import { Factory } from "nestjs-seeder";
+import * as bcrypt from 'bcrypt';
 
 export type UserDocument = User & Document;
 
@@ -13,7 +14,7 @@ export class User {
   @Factory((faker) => faker.internet.email())
   @Prop({ required: true })
   email: string;
-  @Factory((faker) => faker.internet.password())
+  @Factory(bcrypt.hashSync('123456789', 10))
   @Prop({ required: true })
   password: string;
   @Prop({ required: true, default: Date.now() })

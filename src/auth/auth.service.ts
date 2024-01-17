@@ -78,14 +78,26 @@ export class AuthService {
 
   // TODO: Change here to jwt token
   async createRefreshToken(user: Types.ObjectId) {
-    const refreshToken = await bcrypt.hashSync(uuidv4(), 10);
+
     const validUntil = moment().add(7, 'days');
+
+    const refreshToken = await this.jwtService.signAsync(
+      {
+        sub: user, refresh: true
+      },
+      {
+        secret: process.env.JWT_SECRET_KEY, expiresIn: '7d'
+      }
+    );
+
     this.AuthTokenModel.create({
-      refreshToken,
+      jwtToken: refreshToken,
       validUntil,
+      refreshToken,
       isValid: true,
       user,
     });
+
     return refreshToken;
   }
 
