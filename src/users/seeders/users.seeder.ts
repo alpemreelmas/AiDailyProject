@@ -11,7 +11,8 @@ export class UsersSeeder implements Seeder {
 
   async seed(): Promise<any> {
     // Generate 10 users.
-    const users = DataFactory.createForClass(User).generate(1);
+    
+    //const users = DataFactory.createForClass(User).generate(1);
 
     const hashedPass = bcrypt.hashSync('123456789', 10);
     const testUser = new User();
@@ -20,7 +21,8 @@ export class UsersSeeder implements Seeder {
     testUser.password = hashedPass
 
     // Insert into the database.
-    await this.user.insertMany(users);
+    
+    //await this.user.insertMany(users);
     await this.user.create(testUser);
   }
 

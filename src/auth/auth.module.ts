@@ -5,6 +5,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuthToken, AuthTokenSchema } from './entities/auth_token.schema';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { EmailService } from '../email/email.service';
+import { EmailModule } from '../email/email.module';
 
 @Module({
   imports: [
@@ -17,9 +19,10 @@ import { AuthService } from './auth.service';
       secret: process.env.JWT_SECRET_KEY,
       signOptions: { expiresIn: '30m' },
     }),
+    EmailModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, EmailService],
   exports: [MongooseModule],
 })
 export class AuthModule {}

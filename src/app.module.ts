@@ -10,6 +10,8 @@ import { AuthController } from './auth/auth.controller';
 import { UserController } from './users/user.controller';
 import { UserService } from './users/user.service';
 import { RequestLoggerMiddleware } from './middlewares/request-logger.middleware';
+import { EmailModule } from './email/email.module';
+import { EmailService } from './email/email.service';
 
 @Module({
   imports: [
@@ -17,9 +19,10 @@ import { RequestLoggerMiddleware } from './middlewares/request-logger.middleware
     MongooseModule.forRoot(process.env.MONGODB_URI),
     UserModule,
     AuthModule,
+    EmailModule,
   ],
   controllers: [AppController, AuthController, UserController],
-  providers: [AppService, AuthService, UserService],
+  providers: [AppService, AuthService, UserService, EmailService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

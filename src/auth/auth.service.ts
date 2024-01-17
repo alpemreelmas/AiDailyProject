@@ -16,6 +16,7 @@ import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh_token.dto';
 import { User, UserDocument } from '../users/entities/user.schema';
 import { RegisterDto } from './dto/register.dto';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class AuthService {
@@ -26,6 +27,7 @@ export class AuthService {
     private jwtService: JwtService,
     @InjectModel(User.name)
     private UserModel: Model<UserDocument>,
+    private emailService: EmailService
   ) {}
 
   async login(loginDto: LoginDto): Promise<any> {
@@ -35,7 +37,7 @@ export class AuthService {
         "We couldn't find this credentials in our system",
       );
     }
-    if (bcrypt.compareSync(loginDto.password, user.password)) {
+    if (!bcrypt.compareSync(loginDto.password, user.password)) {
       throw new UnauthorizedException();
     }
     const newUser = { sub: user._id, name: user.name, email: user.email };
@@ -67,6 +69,9 @@ export class AuthService {
 
     const newUser = { sub: user._id, name: user.name, email: user.email };
     const hashedRefreshToken = await this.createRefreshToken(user._id);
+
+    await this.emailService.sendVerificationEmail(user.email, user.name);
+
     return {
       ...newUser,
       access_token: await this.jwtService.signAsync(newUser, {
@@ -75,7 +80,7 @@ export class AuthService {
       refresh_token: hashedRefreshToken,
     };
   }
-
+  
   // TODO: Change here to jwt token
   async createRefreshToken(user: Types.ObjectId) {
 
