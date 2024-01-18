@@ -5,10 +5,21 @@ import { join } from 'path';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { ConfigModule } from '@nestjs/config';
+import { EmailProcessor } from './email.processor';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    BullModule.forRoot({
+      redis: {
+        host: process.env.REDIS_HOST,
+        port: Number(process.env.REDIS_PORT),
+      },
+    }),
+    BullModule.registerQueue({
+      name: 'email',
+    }),
     MailerModule.forRoot({
       transport: {
         host: process.env.EMAIL_HOST,
@@ -23,7 +34,7 @@ import { ConfigModule } from '@nestjs/config';
         from: process.env.EMAIL_DEFAULT_FROM,
       },
       template: {
-        dir: join(__dirname, 'templates'),
+        dir: __dirname+'/templates',
         adapter: new EjsAdapter(),
         options: {
           strict: true,
@@ -31,6 +42,7 @@ import { ConfigModule } from '@nestjs/config';
       },
     }),
   ],
-  providers: [EmailService],
+  providers: [EmailService, EmailProcessor],
+  exports: [EmailService]
 })
 export class EmailModule {}

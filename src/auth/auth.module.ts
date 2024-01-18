@@ -7,6 +7,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { EmailService } from '../email/email.service';
 import { EmailModule } from '../email/email.module';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { EmailModule } from '../email/email.module';
       signOptions: { expiresIn: '30m' },
     }),
     EmailModule,
+    BullModule.registerQueue({ name: 'email' }),
   ],
   controllers: [AuthController],
   providers: [AuthService, EmailService],

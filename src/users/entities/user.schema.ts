@@ -11,14 +11,26 @@ export class User {
   @Factory((faker) => faker.person.fullName())
   @Prop({ required: true })
   name: string;
+
   @Factory((faker) => faker.internet.email())
   @Prop({ required: true })
   email: string;
+
   @Factory(bcrypt.hashSync('123456789', 10))
   @Prop({ required: true })
   password: string;
+
+  @Factory(bcrypt.hashSync('123456789', 10))
+  @Prop({ required: true })
+  verificationToken: string;
+
+  @Factory((faker) => faker.date.past())
+  @Prop({ default: false })
+  emailVerifiedAt: Date;
+
   @Prop({ required: true, default: Date.now() })
   createdAt: Date;
+
   @Prop({ required: true, default: Date.now() })
   updatedAt: Date;
 }

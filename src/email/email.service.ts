@@ -1,19 +1,27 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
+import { join } from 'path';
 
 @Injectable()
 export class EmailService {
-  constructor(private mailerService: MailerService) {}
+  constructor(
+    private mailerService: MailerService,
+    @InjectQueue('email') private emailQueue: Queue,
+  ) {}
 
-  async sendVerificationEmail(email: string, name: string) {
+  async sendVerificationEmail(email: string, name: string, verificationToken: string) {
+    const verificationLink = process.env.SITE_URL+`auth/verify?token=${verificationToken}`;
     const subject = `Verification`;
 
-    await this.mailerService.sendMail({
+    await this.emailQueue.add('sendEmail', {
       to: email,
       subject,
-      template: '../../../email/templates/emailVerificationTemplate',
+      template: join(__dirname, 'templates', 'emailVerificationTemplate.ejs'),
       context: {
         name,
+        verificationLink,
       },
     });
   }

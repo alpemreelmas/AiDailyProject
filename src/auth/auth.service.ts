@@ -61,17 +61,20 @@ export class AuthService {
     }
 
     const hashedPass = bcrypt.hashSync(registerDto.password, 10);
+    const verificationToken = uuidv4();
 
     const user = await this.UserModel.create({
       name: registerDto.name,
       email: registerDto.email,
       password: hashedPass,
+      emailVerifiedAt: null,
+      verificationToken
     });
 
     const newUser = { sub: user._id, name: user.name, email: user.email };
     const hashedRefreshToken = await this.createRefreshToken(user._id);
 
-    await this.emailService.sendVerificationEmail(user.email, user.name);
+    this.emailService.sendVerificationEmail(user.email, user.name, verificationToken);
 
     return {
       ...newUser,
@@ -80,6 +83,11 @@ export class AuthService {
       }),
       refresh_token: hashedRefreshToken,
     };
+  }
+
+  async verifyEmail(verificationToken: string) {
+    await this.UserModel.updateOne({verificationToken}, { emailVerifiedAt: new Date() });
+    await this.UserModel.updateOne({verificationToken}, { verificationToken: null });
   }
 
   // TODO: Change here to jwt token

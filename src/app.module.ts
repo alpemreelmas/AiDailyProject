@@ -12,11 +12,13 @@ import { UserService } from './users/user.service';
 import { EmailModule } from './email/email.module';
 import { EmailService } from './email/email.service';
 import { DailyModule } from './daily/daily.module';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.MONGODB_URI),
+    BullModule.registerQueue({ name: 'email' }),
     UserModule,
     AuthModule,
     EmailModule,
