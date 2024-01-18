@@ -4,9 +4,10 @@ import { ValidationPipe } from '@nestjs/common';
 import { ResponseInterceptor } from './interceptors/response.interceptor';
 import { AllExceptionFilter } from './filters/error.filter';
 import { WinstonModule } from 'nest-winston';
-import { format, Logger, transports } from 'winston';
+import { format,  transports } from 'winston';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import DailyRotateFile = require('winston-daily-rotate-file');
+import { LoggingInterceptor } from './interceptors/logging.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -54,6 +55,7 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document);
 
   app.useGlobalInterceptors(new ResponseInterceptor());
+  app.useGlobalInterceptors(new LoggingInterceptor());
   app.useGlobalFilters(new AllExceptionFilter());
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   await app.listen(3000);

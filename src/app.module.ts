@@ -9,7 +9,6 @@ import { AuthModule } from './auth/auth.module';
 import { AuthController } from './auth/auth.controller';
 import { UserController } from './users/user.controller';
 import { UserService } from './users/user.service';
-import { RequestLoggerMiddleware } from './middlewares/request-logger.middleware';
 import { EmailModule } from './email/email.module';
 import { EmailService } from './email/email.service';
 
@@ -25,7 +24,7 @@ import { EmailService } from './email/email.service';
   providers: [AppService, AuthService, UserService, EmailService],
 })
 export class AppModule {
-  configure(consumer: MiddlewareConsumer) {
+/*  configure(consumer: MiddlewareConsumer) {
     consumer.apply(RequestLoggerMiddleware).forRoutes('*');
-  }
+  }*/
 }
