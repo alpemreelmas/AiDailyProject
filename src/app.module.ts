@@ -11,6 +11,7 @@ import { UserController } from './users/user.controller';
 import { UserService } from './users/user.service';
 import { EmailModule } from './email/email.module';
 import { EmailService } from './email/email.service';
+import { DailyModule } from './daily/daily.module';
 
 @Module({
   imports: [
@@ -19,12 +20,13 @@ import { EmailService } from './email/email.service';
     UserModule,
     AuthModule,
     EmailModule,
+    DailyModule,
   ],
   controllers: [AppController, AuthController, UserController],
   providers: [AppService, AuthService, UserService, EmailService],
 })
 export class AppModule {
-/*  configure(consumer: MiddlewareConsumer) {
+  /*  configure(consumer: MiddlewareConsumer) {
     consumer.apply(RequestLoggerMiddleware).forRoutes('*');
   }*/
 }

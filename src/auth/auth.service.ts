@@ -27,7 +27,7 @@ export class AuthService {
     private jwtService: JwtService,
     @InjectModel(User.name)
     private UserModel: Model<UserDocument>,
-    private emailService: EmailService
+    private emailService: EmailService,
   ) {}
 
   async login(loginDto: LoginDto): Promise<any> {
@@ -80,19 +80,20 @@ export class AuthService {
       refresh_token: hashedRefreshToken,
     };
   }
-  
+
   // TODO: Change here to jwt token
   async createRefreshToken(user: Types.ObjectId) {
-
     const validUntil = moment().add(7, 'days');
 
     const refreshToken = await this.jwtService.signAsync(
       {
-        sub: user, refresh: true
+        sub: user,
+        refresh: true,
       },
       {
-        secret: process.env.JWT_SECRET_KEY, expiresIn: '7d'
-      }
+        secret: process.env.JWT_SECRET_KEY,
+        expiresIn: '7d',
+      },
     );
 
     this.AuthTokenModel.create({

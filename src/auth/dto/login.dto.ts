@@ -8,7 +8,7 @@ import {
 } from 'class-validator';
 export class LoginDto {
   @ApiProperty({
-    example: 'example@gmail.com'
+    example: 'test@gmail.com'
   })
   @IsEmail()
   @IsNotEmpty()
