@@ -17,6 +17,7 @@ import { RefreshTokenDto } from './dto/refresh_token.dto';
 import { User, UserDocument } from '../users/entities/user.schema';
 import { RegisterDto } from './dto/register.dto';
 import { EmailService } from '../email/email.service';
+import { UpdateProfileDto } from './dto/updateProfile.dto';
 
 @Injectable()
 export class AuthService {
@@ -134,5 +135,25 @@ export class AuthService {
       }),
       refresh_token: refreshToken,
     };
+  }
+
+  getProfile(id: string) {
+    return this.UserModel.findById(id);
+  }
+
+  async updateProfile(updateProfileDto: UpdateProfileDto, id: string) {
+    const obj: { name?: string; password?: string } = {};
+    if (updateProfileDto.password) {
+      const hashedPass = bcrypt.hashSync(updateProfileDto.password, 10);
+      obj.password = hashedPass;
+    }
+
+    if (updateProfileDto.name) obj.name = updateProfileDto.name;
+
+    const user = await this.UserModel.findByIdAndUpdate(id, obj,{returnDocument:"after"});
+
+    if (!user) throw new NotFoundException("User couldn't find.");
+
+    return user;
   }
 }
