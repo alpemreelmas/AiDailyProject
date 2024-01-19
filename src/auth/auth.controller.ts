@@ -19,7 +19,7 @@ import { AuthGuard } from './auth.guard';
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly AuthService: AuthService) {}
+  constructor(private AuthService: AuthService) {}
 
   @HttpCode(HttpStatus.OK)
   @Post('/login')
@@ -38,6 +38,18 @@ export class AuthController {
   {
     await this.AuthService.verifyEmail(verificationToken);
     return res.redirect('/verified');
+  }
+
+  @Post('/resend-verification')
+  async resendVerificationEmail(@Body('email') email: string, @Res() res) {
+    try {
+      await this.AuthService.resendVerificationEmail(email);
+
+      return res.status(200).json({ message: 'Verification email resent successfully' });
+    } catch (error) {
+      console.error(error)
+      return res.status(500).json({ error: 'An error occurred while resending verification email' });
+    }
   }
 
   @HttpCode(HttpStatus.OK)

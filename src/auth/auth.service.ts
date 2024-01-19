@@ -68,7 +68,8 @@ export class AuthService {
       email: registerDto.email,
       password: hashedPass,
       emailVerifiedAt: null,
-      verificationToken
+      verificationToken,
+      verificationTokenExpiresAt: moment().add(24, 'hours').toDate()
     });
 
     const newUser = { sub: user._id, name: user.name, email: user.email };
@@ -85,9 +86,36 @@ export class AuthService {
     };
   }
 
-  async verifyEmail(verificationToken: string) {
-    await this.UserModel.updateOne({verificationToken}, { emailVerifiedAt: new Date() });
-    await this.UserModel.updateOne({verificationToken}, { verificationToken: null });
+  async verifyEmail(verificationToken: string)
+  {
+    const user = await this.UserModel.findOne({verificationToken });
+
+    if (!user) {
+      throw new NotFoundException('User not found or verification token is invalid');
+    }
+
+    if (moment().isAfter(user.verificationTokenExpiresAt)) {
+      throw new NotFoundException('Verification link has expired');
+    }
+
+    await this.UserModel.updateOne({ verificationToken }, { emailVerifiedAt: moment().format('YYYY-MM-DD') });
+
+    await this.UserModel.updateOne({ verificationToken }, { verificationTokenExpiresAt: null, verificationToken: null });
+  }
+
+  async resendVerificationEmail(email: string)
+  {
+    const user = await this.UserModel.findOne({ email });
+    if(!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const newVerificationToken = uuidv4();
+    const newVerificationTokenExpiresAt = moment().add(24, 'hours').toDate();
+
+    await this.UserModel.updateOne({ email }, { verificationToken: newVerificationToken, verificationTokenExpiresAt: newVerificationTokenExpiresAt });
+
+    this.emailService.sendVerificationEmail(user.email, user.name, newVerificationToken);
   }
 
   // TODO: Change here to jwt token

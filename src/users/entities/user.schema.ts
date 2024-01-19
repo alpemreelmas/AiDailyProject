@@ -20,9 +20,13 @@ export class User {
   @Prop({ required: true })
   password: string;
 
-  @Factory(bcrypt.hashSync('123456789', 10))
+  @Factory(bcrypt.hashSync('123456789', 10)) //change this with uuid
   @Prop({ required: true })
   verificationToken: string;
+
+
+  @Prop({ required: true })
+  verificationTokenExpiresAt: Date;
 
   @Factory((faker) => faker.date.past())
   @Prop({ default: false })
