@@ -88,7 +88,7 @@ export class AuthService {
 
   async verifyEmail(verificationToken: string)
   {
-    const user = await this.UserModel.findOne({verificationToken });
+    const user = await this.UserModel.findOne({ verificationToken });
 
     if (!user) {
       throw new NotFoundException('User not found or verification token is invalid');
@@ -113,10 +113,24 @@ export class AuthService {
     const newVerificationToken = uuidv4();
     const newVerificationTokenExpiresAt = moment().add(24, 'hours').toDate();
 
-    await this.UserModel.updateOne({ email }, { verificationToken: newVerificationToken, verificationTokenExpiresAt: newVerificationTokenExpiresAt });
+    let newUser = await this.UserModel.findOneAndUpdate({ email }, { verificationToken: newVerificationToken, verificationTokenExpiresAt: newVerificationTokenExpiresAt }, {returnDocument: 'after'});
 
-    this.emailService.sendVerificationEmail(user.email, user.name, newVerificationToken);
+    this.emailService.sendVerificationEmail(newUser.email, newUser.name, newUser.verificationToken);
   }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
 
   // TODO: Change here to jwt token
   async createRefreshToken(user: Types.ObjectId) {

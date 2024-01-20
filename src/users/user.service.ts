@@ -46,6 +46,13 @@ export class UserService {
     });
   }
 
+  async updateResetToken(userId: Types.ObjectId, resetToken: string, resetTokenExpiresAt: Date): Promise<void> {
+    await this.UserModel.findByIdAndUpdate(userId, {
+      resetToken,
+      resetTokenExpiresAt,
+    });
+  }
+
   remove(id: Types.ObjectId) {
     return transaction(this.connection, (session) =>
       this.UserModel.findByIdAndDelete(id),

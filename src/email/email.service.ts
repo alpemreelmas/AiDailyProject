@@ -25,4 +25,19 @@ export class EmailService {
       },
     });
   }
+
+  async sendResetPasswordEmail(email: string, name: string, resetToken: string) {
+    const resetLink = process.env.SITE_URL+`reset-password/reset?token=${resetToken}`;
+    const subject = `Reset password`;
+
+    await this.emailQueue.add('sendEmail', {
+      to: email,
+      subject,
+      template: join(__dirname, 'templates', 'emailResetPasswordTemplate.ejs'),
+      context: {
+        name,
+        resetLink,
+      },
+    });
+  }
 }

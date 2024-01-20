@@ -42,15 +42,9 @@ export class AuthController {
 
   @Post('/resend-verification')
   async resendVerificationEmail(@Body('email') email: string, @Res() res) {
-    try {
-      await this.AuthService.resendVerificationEmail(email);
-
-      return res.status(200).json({ message: 'Verification email resent successfully' });
-    } catch (error) {
-      console.error(error)
-      return res.status(500).json({ error: 'An error occurred while resending verification email' });
-    }
+      return this.AuthService.resendVerificationEmail(email);
   }
+
 
   @HttpCode(HttpStatus.OK)
   @Post('/refresh-token')

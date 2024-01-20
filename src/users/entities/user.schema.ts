@@ -29,7 +29,7 @@ export class User {
   verificationTokenExpiresAt: Date;
 
   @Factory((faker) => faker.date.past())
-  @Prop({ default: false })
+  @Prop({ default: null })
   emailVerifiedAt: Date;
 
   @Prop({ required: true, default: Date.now() })
