@@ -5,13 +5,13 @@ export type resetPasswordDocument = ResetPassword & Document;
 
 @Schema()
 export class ResetPassword{
-  @Prop({ required: false })
+  @Prop({ required: true })
   email: string;
 
-  @Prop({ required: false })
+  @Prop({ required: true })
   resetToken: string;
 
-  @Prop({ required: false, default: null })
+  @Prop({ required: true })
   resetTokenExpiresAt: Date;
 
   @Prop({ required: true, default: Date.now() })

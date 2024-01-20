@@ -1,6 +1,7 @@
-import { Body, Controller, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ResetPasswordService } from './reset-password.service';
 import { ApiTags } from '@nestjs/swagger';
+import { ResetPasswordDto } from './dto/reset-password-token.dto';
 
 @ApiTags('resetPassword')
 @Controller('reset-password')
@@ -13,9 +14,15 @@ export class ResetPasswordController {
     return this.resetPasswordService.sendForgotPasswordEmail(email);
   }
 
-  @Post('reset')
-  async resetPassword(@Body('email') email:string, @Query('token') resetToken: string, @Body('newPassword') newPassword: string): Promise<void>
+  @Get('reset')
+  async checkToken(@Query('token') resetToken: string)
   {
-    return this.resetPasswordService.resetPassword(email, resetToken, newPassword);
+    return this.resetPasswordService.checkToken(resetToken);
+  }
+
+  @Post('reset')
+  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto, @Query('token') resetToken: string)
+  {
+    return this.resetPasswordService.resetPassword(resetPasswordDto, resetToken);
   }
 }

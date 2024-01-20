@@ -13,6 +13,7 @@ import * as moment from 'moment';
 import { EmailService } from '../email/email.service';
 import * as bcrypt from 'bcrypt';
 import { publicDecrypt } from 'crypto';
+import { ResetPasswordDto } from './dto/reset-password-token.dto';
 
 @Injectable()
 export class ResetPasswordService {
@@ -35,12 +36,12 @@ export class ResetPasswordService {
           throw new NotFoundException('User not found');
         }
     
-        if (!user.emailVerifiedAt == null) {
+        /*if (!user.emailVerifiedAt == null) {
           throw new NotFoundException('Email not verified');
-        }
+        }*/
 
         const newResetToken = uuidv4();
-        const newResetTokenExpiresAt = moment().add(1, 'hour').toDate();
+        const newResetTokenExpiresAt = moment().add(15, 'minutes').toDate();
 
         const resetPassword = await this.ResetPasswordModel.create({
           email: user.email,
@@ -52,9 +53,9 @@ export class ResetPasswordService {
         this.emailService.sendResetPasswordEmail(resetPassword.email, user.name, resetPassword.resetToken);
       }
 
-      async resetPassword(email: string, resetToken: string, newPassword: string)
+      async resetPassword(resetPasswordDto: ResetPasswordDto, resetToken: string)
       {
-        const user = await this.UserModel.findOne({ email });
+        const user = await this.UserModel.findOne({ email:resetPasswordDto.email });
         const userResetToken = await this.ResetPasswordModel.findOne({ resetToken });
 
         if(!user) {
@@ -69,11 +70,19 @@ export class ResetPasswordService {
           throw new NotFoundException('Reset token has expired');
         }
 
-        if(bcrypt.compareSync(newPassword, user.password)){
+        if(bcrypt.compareSync(resetPasswordDto.newPassword, user.password)){
           throw new BadRequestException('New password must be different from the old password');
         }
 
-        await this.UserModel.updateOne({ email }, {password: bcrypt.hashSync(newPassword, 10)});
-        await this.ResetPasswordModel.updateOne({ resetToken }, {resetTokenExpiresAt: null, resetToken: null});
+        await this.UserModel.updateOne({ email:resetPasswordDto.email }, {password: bcrypt.hashSync(resetPasswordDto.newPassword, 10)});
+        await this.ResetPasswordModel.deleteOne({ resetToken });
+      }
+
+      async checkToken(resetToken: string)
+      {
+        const userResetToken = await this.ResetPasswordModel.findOne({resetToken});
+        if(!userResetToken){
+          throw new NotFoundException('Invalid reset token');
+        }
       }
 }
