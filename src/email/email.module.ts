@@ -8,13 +8,14 @@ import { ConfigModule } from '@nestjs/config';
 import { EmailProcessor } from './email.processor';
 import { BullModule } from '@nestjs/bull';
 
+// FIXME: I added '||' control, when you remove it you got an error regarding process.env.REDIS_PORT is not a number
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule,
     BullModule.forRoot({
       redis: {
         host: process.env.REDIS_HOST,
-        port: Number(process.env.REDIS_PORT),
+        port: Number(process.env.REDIS_PORT) || 2525,
       },
     }),
     BullModule.registerQueue({
@@ -22,19 +23,19 @@ import { BullModule } from '@nestjs/bull';
     }),
     MailerModule.forRoot({
       transport: {
-        host: process.env.EMAIL_HOST,
-        port: process.env.EMAIL_PORT,
-        secure: process.env.EMAIL_SECURE === 'true',
+        host: process.env.MAIL_HOST,
+        port: Number(process.env.MAIL_PORT) || 2525,
+        secure: process.env.MAIL_SECURE === 'true',
         auth: {
-          user: process.env.EMAIL_USERNAME,
-          pass: process.env.EMAIL_PASSWORD,
+          user: process.env.MAIL_USERNAME,
+          pass: process.env.MAIL_PASSWORD,
         },
       },
       defaults: {
-        from: process.env.EMAIL_DEFAULT_FROM,
+        from: process.env.MAIL_DEFAULT_FROM,
       },
       template: {
-        dir: __dirname+'/templates',
+        dir: __dirname + '/templates',
         adapter: new EjsAdapter(),
         options: {
           strict: true,
@@ -43,6 +44,6 @@ import { BullModule } from '@nestjs/bull';
     }),
   ],
   providers: [EmailService, EmailProcessor],
-  exports: [EmailService]
+  exports: [EmailService],
 })
 export class EmailModule {}

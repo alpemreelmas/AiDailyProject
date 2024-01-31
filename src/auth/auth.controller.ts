@@ -6,7 +6,9 @@ import {
   HttpStatus,
   Post,
   Query,
-  Req,Res, UseGuards,
+  Req,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
 import { LoginDto } from './dto/login.dto';
 import { AuthService } from './auth.service';
@@ -34,17 +36,15 @@ export class AuthController {
   }
 
   @Get('/verify')
-  async verifyEmail(@Query('token') verificationToken: string, @Res() res)
-  {
+  async verifyEmail(@Query('token') verificationToken: string, @Res() res) {
     await this.AuthService.verifyEmail(verificationToken);
     return res.redirect('/verified');
   }
 
   @Post('/resend-verification')
   async resendVerificationEmail(@Body('email') email: string, @Res() res) {
-      return this.AuthService.resendVerificationEmail(email);
+    return this.AuthService.resendVerificationEmail(email);
   }
-
 
   @HttpCode(HttpStatus.OK)
   @Post('/refresh-token')

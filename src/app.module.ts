@@ -14,10 +14,16 @@ import { EmailService } from './email/email.service';
 import { DailyModule } from './daily/daily.module';
 import { BullModule } from '@nestjs/bull';
 import { ResetPasswordModule } from './reset-password/reset-password.module';
+import { NotificationModule } from './notification/notification.module';
+import { NotificationService } from './notification/notification.service';
+import notificationConfig from './config/notification';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [notificationConfig],
+    }),
     MongooseModule.forRoot(process.env.MONGODB_URI),
     BullModule.registerQueue({ name: 'email' }),
     UserModule,
@@ -25,9 +31,16 @@ import { ResetPasswordModule } from './reset-password/reset-password.module';
     EmailModule,
     DailyModule,
     ResetPasswordModule,
+    NotificationModule,
   ],
   controllers: [AppController, AuthController, UserController],
-  providers: [AppService, AuthService, UserService, EmailService],
+  providers: [
+    AppService,
+    AuthService,
+    UserService,
+    EmailService,
+    NotificationService,
+  ],
 })
 export class AppModule {
   /*  configure(consumer: MiddlewareConsumer) {
