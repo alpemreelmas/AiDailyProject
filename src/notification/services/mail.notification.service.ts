@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { INotificationService } from '../INotificationService';
+import { INotificationService } from '../types/notificationService.interface';
 
 @Injectable()
 export class MailNotificationService implements INotificationService {

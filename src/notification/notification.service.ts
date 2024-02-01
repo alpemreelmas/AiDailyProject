@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { INotificationService } from './INotificationService';
+import { INotificationService } from './types/notificationService.interface';
 import { NotificationFactory } from './notificationFactory';
 
 @Injectable()
 export class NotificationService {
-  public notificationService: INotificationService;
+  public notificationServices: INotificationService[];
   constructor(private notificationFactory: NotificationFactory) {
-    this.notificationService = this.notificationFactory.getInstance();
+    this.notificationServices = this.notificationFactory.getInstance();
   }
 
   async sendNotification() {
-    this.notificationService.sendNotification();
+    this.notificationServices.forEach((notificationService) => {
+      notificationService.sendNotification();
+    });
   }
 }
