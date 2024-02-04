@@ -1,18 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { MailerService } from '@nestjs-modules/mailer';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { join } from 'path';
 
 @Injectable()
 export class EmailService {
-  constructor(
-    private mailerService: MailerService,
-    @InjectQueue('email') private emailQueue: Queue,
-  ) {}
+  constructor(@InjectQueue('email') private emailQueue: Queue) {}
 
-  async sendVerificationEmail(email: string, name: string, verificationToken: string) {
-    const verificationLink = process.env.SITE_URL+`auth/verify?token=${verificationToken}`;
+  async sendVerificationEmail(
+    email: string,
+    name: string,
+    verificationToken: string,
+  ) {
+    const verificationLink =
+      process.env.SITE_URL + `auth/verify?token=${verificationToken}`;
     const subject = `Verification`;
 
     await this.emailQueue.add('sendEmail', {
@@ -26,8 +27,13 @@ export class EmailService {
     });
   }
 
-  async sendResetPasswordEmail(email: string, name: string, resetToken: string) {
-    const resetLink = process.env.SITE_URL+`reset-password/reset?token=${resetToken}`;
+  async sendResetPasswordEmail(
+    email: string,
+    name: string,
+    resetToken: string,
+  ) {
+    const resetLink =
+      process.env.SITE_URL + `reset-password/reset?token=${resetToken}`;
     const subject = `Reset password`;
 
     await this.emailQueue.add('sendEmail', {

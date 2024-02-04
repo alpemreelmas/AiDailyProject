@@ -18,6 +18,8 @@ import { User, UserDocument } from '../users/entities/user.schema';
 import { RegisterDto } from './dto/register.dto';
 import { EmailService } from '../email/email.service';
 import { UpdateProfileDto } from './dto/updateProfile.dto';
+import { NotificationService } from 'src/notification/notification.service';
+import { LoggedInNotification } from 'src/notification/notifiables/loggedInNotification.notification';
 
 @Injectable()
 export class AuthService {
@@ -29,6 +31,7 @@ export class AuthService {
     @InjectModel(User.name)
     private UserModel: Model<UserDocument>,
     private emailService: EmailService,
+    private notificationService: NotificationService,
   ) {}
 
   async login(loginDto: LoginDto): Promise<any> {
@@ -43,6 +46,7 @@ export class AuthService {
     }
     const newUser = { sub: user._id, name: user.name, email: user.email };
     const hashedRefreshToken = await this.createRefreshToken(user._id);
+    this.notificationService.sendNotification(new LoggedInNotification(user));
     return {
       ...newUser,
       access_token: await this.jwtService.signAsync(newUser, {

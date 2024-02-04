@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { INotificationService } from '../types/notificationService.interface';
 import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class NotificationFactory {
@@ -19,6 +18,10 @@ export class NotificationFactory {
 
   public getInstances() {
     return this.notificationServices;
+  }
+
+  public setChannelInstances() {
+    this.notificationChannelServices = new Map();
   }
 
   public getChannelInstances(channels: Array<string>) {

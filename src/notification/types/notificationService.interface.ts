@@ -1,3 +1,5 @@
+import { INotifiable } from './notifiable.interface';
+
 export interface INotificationService {
-  sendNotification(): void;
+  sendNotification(notifiable: INotifiable): void;
 }

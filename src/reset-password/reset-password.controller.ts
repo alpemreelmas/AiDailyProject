@@ -9,20 +9,23 @@ export class ResetPasswordController {
   constructor(private resetPasswordService: ResetPasswordService) {}
 
   @Post()
-  async requestPasswordReset(@Body('email') email: string)
-  {
+  async requestPasswordReset(@Body('email') email: string) {
     return this.resetPasswordService.sendForgotPasswordEmail(email);
   }
 
   @Get('reset')
-  async checkToken(@Query('token') resetToken: string)
-  {
+  async checkToken(@Query('token') resetToken: string) {
     return this.resetPasswordService.checkToken(resetToken);
   }
 
   @Post('reset')
-  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto, @Query('token') resetToken: string)
-  {
-    return this.resetPasswordService.resetPassword(resetPasswordDto, resetToken);
+  async resetPassword(
+    @Body() resetPasswordDto: ResetPasswordDto,
+    @Query('token') resetToken: string,
+  ) {
+    return this.resetPasswordService.resetPassword(
+      resetPasswordDto,
+      resetToken,
+    );
   }
 }

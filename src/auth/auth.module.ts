@@ -8,6 +8,9 @@ import { AuthService } from './auth.service';
 import { EmailService } from '../email/email.service';
 import { EmailModule } from '../email/email.module';
 import { BullModule } from '@nestjs/bull';
+import { NotificationService } from 'src/notification/notification.service';
+import { NotificationFactory } from 'src/notification/factories/notificationFactory';
+import { NotificationModule } from 'src/notification/notification.module';
 
 @Module({
   imports: [
@@ -22,9 +25,10 @@ import { BullModule } from '@nestjs/bull';
     }),
     EmailModule,
     BullModule.registerQueue({ name: 'email' }),
+    NotificationModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, EmailService],
+  providers: [AuthService, EmailService, NotificationService],
   exports: [MongooseModule],
 })
 export class AuthModule {}

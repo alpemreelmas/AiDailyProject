@@ -15,13 +15,11 @@ export class AppController {
   @Get()
   @UseGuards(AuthGuard)
   getHello(): string {
-    this.notificationService.channel('firebase').sendNotification();
     return 'ok';
   }
 
   @Get('/test')
   getHi(): string {
-    this.notificationService.sendNotification();
     return 'ok';
   }
 }

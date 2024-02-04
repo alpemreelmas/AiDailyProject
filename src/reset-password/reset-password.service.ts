@@ -1,12 +1,15 @@
 import {
-    BadRequestException,
-    Injectable,
-    NotFoundException,
-    UnauthorizedException,
-  } from '@nestjs/common';
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel, InjectConnection } from '@nestjs/mongoose';
 import { Model, Connection } from 'mongoose';
-import { ResetPassword, resetPasswordDocument } from './entities/reset-password.schema';
+import {
+  ResetPassword,
+  resetPasswordDocument,
+} from './entities/reset-password.schema';
 import { User, UserDocument } from '../users/entities/user.schema';
 import { v4 as uuidv4 } from 'uuid';
 import * as moment from 'moment';
@@ -17,72 +20,83 @@ import { ResetPasswordDto } from './dto/reset-password-token.dto';
 
 @Injectable()
 export class ResetPasswordService {
-    constructor(
-        @InjectConnection() private readonly connection: Connection,
-        @InjectModel(ResetPassword.name) 
-        private ResetPasswordModel: Model<resetPasswordDocument>,
+  constructor(
+    @InjectConnection() private readonly connection: Connection,
+    @InjectModel(ResetPassword.name)
+    private ResetPasswordModel: Model<resetPasswordDocument>,
 
-        @InjectModel(User.name)
-        private UserModel: Model<UserDocument>,
+    @InjectModel(User.name)
+    private UserModel: Model<UserDocument>,
 
-        private emailService: EmailService,
-      ) {}
+    private emailService: EmailService,
+  ) {}
 
-      async sendForgotPasswordEmail(email: string)
-      {
-        const user = await this.UserModel.findOne({ email });
+  async sendForgotPasswordEmail(email: string) {
+    const user = await this.UserModel.findOne({ email });
 
-        if (!user) {
-          throw new NotFoundException('User not found');
-        }
-    
-        /*if (!user.emailVerifiedAt == null) {
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    /*if (!user.emailVerifiedAt == null) {
           throw new NotFoundException('Email not verified');
         }*/
 
-        const newResetToken = uuidv4();
-        const newResetTokenExpiresAt = moment().add(15, 'minutes').toDate();
+    const newResetToken = uuidv4();
+    const newResetTokenExpiresAt = moment().add(15, 'minutes').toDate();
 
-        const resetPassword = await this.ResetPasswordModel.create({
-          email: user.email,
-          resetToken: newResetToken,
-          resetTokenExpiresAt: newResetTokenExpiresAt,
-        });
-      
-      
-        this.emailService.sendResetPasswordEmail(resetPassword.email, user.name, resetPassword.resetToken);
-      }
+    const resetPassword = await this.ResetPasswordModel.create({
+      email: user.email,
+      resetToken: newResetToken,
+      resetTokenExpiresAt: newResetTokenExpiresAt,
+    });
 
-      async resetPassword(resetPasswordDto: ResetPasswordDto, resetToken: string)
-      {
-        const user = await this.UserModel.findOne({ email:resetPasswordDto.email });
-        const userResetToken = await this.ResetPasswordModel.findOne({ resetToken });
+    this.emailService.sendResetPasswordEmail(
+      resetPassword.email,
+      user.name,
+      resetPassword.resetToken,
+    );
+  }
 
-        if(!user) {
-          throw new NotFoundException('User not found');
-        }
+  async resetPassword(resetPasswordDto: ResetPasswordDto, resetToken: string) {
+    const user = await this.UserModel.findOne({
+      email: resetPasswordDto.email,
+    });
+    const userResetToken = await this.ResetPasswordModel.findOne({
+      resetToken,
+    });
 
-        if(userResetToken.resetToken !== resetToken){
-          throw new NotFoundException('Invalid reset token');
-        }
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
 
-        if(moment().isAfter(moment(userResetToken.resetTokenExpiresAt))){
-          throw new NotFoundException('Reset token has expired');
-        }
+    if (userResetToken.resetToken !== resetToken) {
+      throw new NotFoundException('Invalid reset token');
+    }
 
-        if(bcrypt.compareSync(resetPasswordDto.newPassword, user.password)){
-          throw new BadRequestException('New password must be different from the old password');
-        }
+    if (moment().isAfter(moment(userResetToken.resetTokenExpiresAt))) {
+      throw new NotFoundException('Reset token has expired');
+    }
 
-        await this.UserModel.updateOne({ email:resetPasswordDto.email }, {password: bcrypt.hashSync(resetPasswordDto.newPassword, 10)});
-        await this.ResetPasswordModel.deleteOne({ resetToken });
-      }
+    if (bcrypt.compareSync(resetPasswordDto.newPassword, user.password)) {
+      throw new BadRequestException(
+        'New password must be different from the old password',
+      );
+    }
 
-      async checkToken(resetToken: string)
-      {
-        const userResetToken = await this.ResetPasswordModel.findOne({resetToken});
-        if(!userResetToken){
-          throw new NotFoundException('Invalid reset token');
-        }
-      }
+    await this.UserModel.updateOne(
+      { email: resetPasswordDto.email },
+      { password: bcrypt.hashSync(resetPasswordDto.newPassword, 10) },
+    );
+    await this.ResetPasswordModel.deleteOne({ resetToken });
+  }
+
+  async checkToken(resetToken: string) {
+    const userResetToken = await this.ResetPasswordModel.findOne({
+      resetToken,
+    });
+    if (!userResetToken) {
+      throw new NotFoundException('Invalid reset token');
+    }
+  }
 }

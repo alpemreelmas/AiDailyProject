@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { INotificationService } from './types/notificationService.interface';
 import { NotificationFactory } from './factories/notificationFactory';
 import { ConfigService } from '@nestjs/config';
+import { INotifiable } from './types/notifiable.interface';
 
 @Injectable()
 export class NotificationService {
@@ -14,14 +15,14 @@ export class NotificationService {
     this.notificationServices = this.notificationFactory.getInstances();
   }
 
-  sendNotification() {
-    if (this.channels.size > 0) {
+  sendNotification(notifiable: INotifiable) {
+    if (this.channels?.size > 0) {
       this.channels.forEach((notificationService) => {
-        notificationService.sendNotification();
+        notificationService.sendNotification(notifiable);
       });
     } else {
       this.notificationServices.forEach((notificationService) => {
-        notificationService.sendNotification();
+        notificationService.sendNotification(notifiable);
       });
     }
     this.channels = new Map();
@@ -32,6 +33,7 @@ export class NotificationService {
       ? channels
       : channels.split('|');
     this.channels = this.notificationFactory.getChannelInstances(channelsArray);
+    this.notificationFactory.setChannelInstances();
     return this;
   }
 }
