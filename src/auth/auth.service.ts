@@ -46,7 +46,9 @@ export class AuthService {
     }
     const newUser = { sub: user._id, name: user.name, email: user.email };
     const hashedRefreshToken = await this.createRefreshToken(user._id);
+
     this.notificationService.sendNotification(new LoggedInNotification(user));
+    
     return {
       ...newUser,
       access_token: await this.jwtService.signAsync(newUser, {

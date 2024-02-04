@@ -16,11 +16,7 @@ export class LoggedInNotification implements INotifiable {
     this.emailQueue.add('sendEmail', {
       to: this.user.email,
       subject: 'New device logged in with your account.',
-      template: join(
-        __dirname,
-        'templates',
-        'notifications/newLoggedInNotification.ejs',
-      ),
+      template: join(__dirname, '../../email/templates' , 'notifications/newLoggedInNotification.ejs'),
       context: {
         user: this.user.name,
       },

@@ -23,6 +23,7 @@ import notificationConfig from './config/notification';
     ConfigModule.forRoot({
       isGlobal: true,
       load: [notificationConfig],
+      envFilePath: '.env'
     }),
     MongooseModule.forRoot(process.env.MONGODB_URI),
     BullModule.registerQueue({ name: 'email' }),

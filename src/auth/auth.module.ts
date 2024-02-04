@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from '../users/user.module';
 import { MongooseModule } from '@nestjs/mongoose';
