@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EmailProcessor } from './email.processor';
 import { BullModule } from '@nestjs/bull';
 
+
 @Module({
   imports: [
     BullModule.forRootAsync({

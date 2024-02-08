@@ -5,14 +5,18 @@ import { ResetPassword, ResetPasswordSchema} from './entities/reset-password.sch
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from '../users/user.module';
 import { EmailModule } from 'src/email/email.module';
+import { NotificationService } from 'src/notification/notification.service';
+import { NotificationFactory } from 'src/notification/factories/notificationFactory';
+import { NotificationModule } from 'src/notification/notification.module';
 
 @Module({
   imports: [
     UserModule,
     EmailModule,
     MongooseModule.forFeature([{ name: 'ResetPassword', schema: ResetPasswordSchema }]),
+    NotificationModule,
   ],
   controllers: [ResetPasswordController],
-  providers: [ResetPasswordService]
+  providers: [ResetPasswordService, NotificationService]
 })
 export class ResetPasswordModule {}

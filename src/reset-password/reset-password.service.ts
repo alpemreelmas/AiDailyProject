@@ -17,6 +17,8 @@ import { EmailService } from '../email/email.service';
 import * as bcrypt from 'bcrypt';
 import { publicDecrypt } from 'crypto';
 import { ResetPasswordDto } from './dto/reset-password-token.dto';
+import { NotificationService } from 'src/notification/notification.service';
+import { resetPasswordNotification } from 'src/notification/notifiables/resetPasswordNotification.notification';
 
 @Injectable()
 export class ResetPasswordService {
@@ -29,6 +31,7 @@ export class ResetPasswordService {
     private UserModel: Model<UserDocument>,
 
     private emailService: EmailService,
+    private notificationService: NotificationService,
   ) {}
 
   async sendForgotPasswordEmail(email: string) {
@@ -88,6 +91,7 @@ export class ResetPasswordService {
       { email: resetPasswordDto.email },
       { password: bcrypt.hashSync(resetPasswordDto.newPassword, 10) },
     );
+    this.notificationService.sendNotification(new resetPasswordNotification(user));
     await this.ResetPasswordModel.deleteOne({ resetToken });
   }
 
