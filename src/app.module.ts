@@ -17,6 +17,8 @@ import { ResetPasswordModule } from './reset-password/reset-password.module';
 import { NotificationModule } from './notification/notification.module';
 import { NotificationService } from './notification/notification.service';
 import notificationConfig from './config/notification';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -26,6 +28,10 @@ import notificationConfig from './config/notification';
       envFilePath: '.env'
     }),
     MongooseModule.forRoot(process.env.MONGODB_URI),
+    ThrottlerModule.forRoot([{
+      ttl: 60000,
+      limit: 60,
+    }]),
     BullModule.registerQueue({ name: 'email' }),
     UserModule,
     AuthModule,
@@ -41,6 +47,10 @@ import notificationConfig from './config/notification';
     UserService,
     EmailService,
     NotificationService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AppModule {

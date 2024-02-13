@@ -20,6 +20,8 @@ import { EmailService } from '../email/email.service';
 import { UpdateProfileDto } from './dto/updateProfile.dto';
 import { NotificationService } from 'src/notification/notification.service';
 import { LoggedInNotification } from 'src/notification/notifiables/loggedInNotification.notification';
+import { welcomeNotification } from 'src/notification/notifiables/welcomeNotification.notification';
+import { verificationNotification } from 'src/notification/notifiables/verificationNotification.notification';
 
 @Injectable()
 export class AuthService {
@@ -81,11 +83,8 @@ export class AuthService {
     const newUser = { sub: user._id, name: user.name, email: user.email };
     const hashedRefreshToken = await this.createRefreshToken(user._id);
 
-    this.emailService.sendVerificationEmail(
-      user.email,
-      user.name,
-      verificationToken,
-    );
+    this.notificationService.sendNotification(new welcomeNotification(user));
+    this.notificationService.sendNotification(new verificationNotification(user));
 
     return {
       ...newUser,
@@ -121,15 +120,15 @@ export class AuthService {
   }
 
   async resendVerificationEmail(email: string) {
-    const user = await this.UserModel.findOne({ email });
-    if (!user) {
+    const oUser = await this.UserModel.findOne({ email });
+    if (!oUser) {
       throw new NotFoundException('User not found');
     }
 
     const newVerificationToken = uuidv4();
     const newVerificationTokenExpiresAt = moment().add(24, 'hours').toDate();
 
-    const newUser = await this.UserModel.findOneAndUpdate(
+    const user = await this.UserModel.findOneAndUpdate(
       { email },
       {
         verificationToken: newVerificationToken,
@@ -138,11 +137,7 @@ export class AuthService {
       { returnDocument: 'after' },
     );
 
-    this.emailService.sendVerificationEmail(
-      newUser.email,
-      newUser.name,
-      newUser.verificationToken,
-    );
+    this.notificationService.sendNotification(new verificationNotification(user));
   }
 
   // TODO: Change here to jwt token

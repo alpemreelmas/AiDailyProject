@@ -19,6 +19,7 @@ import { publicDecrypt } from 'crypto';
 import { ResetPasswordDto } from './dto/reset-password-token.dto';
 import { NotificationService } from 'src/notification/notification.service';
 import { resetPasswordNotification } from 'src/notification/notifiables/resetPasswordNotification.notification';
+import { forgotPasswordNotification } from 'src/notification/notifiables/forgotPasswordNotification.notification';
 
 @Injectable()
 export class ResetPasswordService {
@@ -54,11 +55,7 @@ export class ResetPasswordService {
       resetTokenExpiresAt: newResetTokenExpiresAt,
     });
 
-    this.emailService.sendResetPasswordEmail(
-      resetPassword.email,
-      user.name,
-      resetPassword.resetToken,
-    );
+    this.notificationService.sendNotification(new forgotPasswordNotification(user, resetPassword));
   }
 
   async resetPassword(resetPasswordDto: ResetPasswordDto, resetToken: string) {
