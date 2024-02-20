@@ -19,6 +19,9 @@ import { NotificationService } from './notification/notification.service';
 import notificationConfig from './config/notification';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { DashboardModule } from './dashboard/dashboard.module';
+import { RolesModule } from './roles/roles.module';
+import { RolesService } from './roles/roles.service';
 
 @Module({
   imports: [
@@ -39,6 +42,8 @@ import { APP_GUARD } from '@nestjs/core';
     DailyModule,
     ResetPasswordModule,
     NotificationModule,
+    DashboardModule,
+    RolesModule,
   ],
   controllers: [AppController, AuthController, UserController],
   providers: [
@@ -47,6 +52,7 @@ import { APP_GUARD } from '@nestjs/core';
     UserService,
     EmailService,
     NotificationService,
+    RolesService,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

@@ -22,6 +22,8 @@ import { NotificationService } from 'src/notification/notification.service';
 import { LoggedInNotification } from 'src/notification/notifiables/loggedInNotification.notification';
 import { welcomeNotification } from 'src/notification/notifiables/welcomeNotification.notification';
 import { verificationNotification } from 'src/notification/notifiables/verificationNotification.notification';
+import { RolesService } from 'src/roles/roles.service';
+import { Roles, rolesDocument } from 'src/roles/entities/roles.schema';
 
 @Injectable()
 export class AuthService {
@@ -34,6 +36,9 @@ export class AuthService {
     private UserModel: Model<UserDocument>,
     private emailService: EmailService,
     private notificationService: NotificationService,
+    @InjectModel(Roles.name)
+    private RolesModel: Model<rolesDocument>,
+    private rolesService: RolesService,
   ) {}
 
   async login(loginDto: LoginDto): Promise<any> {
@@ -79,6 +84,12 @@ export class AuthService {
       verificationToken,
       verificationTokenExpiresAt: moment().add(24, 'hours').toDate(),
     });
+
+    const role = await this.RolesModel.create({
+      userName: registerDto.name,
+      email: registerDto.email,
+      role: 'user',
+    })
 
     const newUser = { sub: user._id, name: user.name, email: user.email };
     const hashedRefreshToken = await this.createRefreshToken(user._id);

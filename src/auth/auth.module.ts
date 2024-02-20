@@ -12,6 +12,8 @@ import { BullModule } from '@nestjs/bull';
 import { NotificationService } from 'src/notification/notification.service';
 import { NotificationFactory } from 'src/notification/factories/notificationFactory';
 import { NotificationModule } from 'src/notification/notification.module';
+import { RolesService } from 'src/roles/roles.service';
+import { RolesModule } from 'src/roles/roles.module';
 
 @Module({
   imports: [
@@ -27,9 +29,10 @@ import { NotificationModule } from 'src/notification/notification.module';
     EmailModule,
     BullModule.registerQueue({ name: 'email' }),
     NotificationModule,
+    RolesModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, EmailService, NotificationService],
-  exports: [MongooseModule],
+  providers: [AuthService, EmailService, NotificationService, RolesService],
+  exports: [MongooseModule, RolesService],
 })
 export class AuthModule {}

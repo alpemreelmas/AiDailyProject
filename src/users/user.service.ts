@@ -37,6 +37,10 @@ export class UserService {
     );
   }
 
+  async findByEmail(email: string): Promise<User> {
+    return await this.UserModel.findOne({ email }).exec();
+  }
+
   update(id: Types.ObjectId, updateUserDto: UpdateUserDto) {
     return transaction(this.connection, (session) => {
       if (updateUserDto.password) {
