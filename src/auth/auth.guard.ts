@@ -31,6 +31,7 @@ export class AuthGuard implements CanActivate {
       request['user'] = payload;
 
       const userEmail = payload.email;
+      //TODO: cache user roles
       const userRoles = await this.rolesService.getUserRoles(userEmail);
 
 
