@@ -6,13 +6,7 @@ export type rolesDocument = Roles & Document;
 @Schema()
 export class Roles{
   @Prop({ required: true })
-  userName: string;
-
-  @Prop({ required: true })
-  email: string;
-
-  @Prop({ required: true, default: "user" })
-  role: string;
+  name: string;
 
   @Prop({ required: true, default: Date.now() })
   createdAt: Date;

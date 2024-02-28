@@ -6,12 +6,14 @@ import { User, UserDocument } from './entities/user.schema';
 import { Model, Types, Connection } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { transaction } from '../helpers/transaction.helper';
+import { UserAndRoles, userAndRolesDocument } from 'src/roles/entities/userAndRoles.schema';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectConnection() private readonly connection: Connection,
     @InjectModel(User.name) private UserModel: Model<UserDocument>,
+    @InjectModel(UserAndRoles.name) private UserAndRolesModel: Model<userAndRolesDocument>,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -31,10 +33,20 @@ export class UserService {
     return transaction(this.connection, (session) => this.UserModel.find());
   }
 
+  findAllWithRoles(){
+    return this.UserAndRolesModel.find().populate(["userId","roleId"])
+  }
+
   findById(id: Types.ObjectId) {
     return transaction(this.connection, (session) =>
       this.UserModel.findById(id),
     );
+  }
+
+  findByIdWithRole(id:string){
+    return transaction(this.connection, (session) =>
+    this.UserAndRolesModel.find({userId: id}).populate("roleId"),
+  );
   }
 
   async findByEmail(email: string): Promise<User> {

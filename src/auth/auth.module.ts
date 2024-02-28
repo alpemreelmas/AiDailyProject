@@ -14,6 +14,7 @@ import { NotificationFactory } from 'src/notification/factories/notificationFact
 import { NotificationModule } from 'src/notification/notification.module';
 import { RolesService } from 'src/roles/roles.service';
 import { RolesModule } from 'src/roles/roles.module';
+import { UserAndRoles } from 'src/roles/entities/userAndRoles.schema';
 
 @Module({
   imports: [

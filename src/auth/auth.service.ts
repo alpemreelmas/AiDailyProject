@@ -24,12 +24,15 @@ import { welcomeNotification } from 'src/notification/notifiables/welcomeNotific
 import { verificationNotification } from 'src/notification/notifiables/verificationNotification.notification';
 import { RolesService } from 'src/roles/roles.service';
 import { Roles, rolesDocument } from 'src/roles/entities/roles.schema';
+import { UserAndRoles, userAndRolesDocument } from 'src/roles/entities/userAndRoles.schema';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(AuthToken.name)
     private AuthTokenModel: Model<AuthTokenDocument>,
+    @InjectModel(UserAndRoles.name)
+    private UserAndRolesModel: Model<userAndRolesDocument>,
     private userService: UserService,
     private jwtService: JwtService,
     @InjectModel(User.name)
@@ -85,11 +88,12 @@ export class AuthService {
       verificationTokenExpiresAt: moment().add(24, 'hours').toDate(),
     });
 
-    const role = await this.RolesModel.create({
-      userName: registerDto.name,
-      email: registerDto.email,
-      role: 'user',
-    })
+    const role = await this.RolesModel.findOne({ name: 'user' }).exec();
+
+    await this.UserAndRolesModel.create({
+      userId: user._id,
+      roleId: role._id,
+    });
 
     const newUser = { sub: user._id, name: user.name, email: user.email };
     const hashedRefreshToken = await this.createRefreshToken(user._id);

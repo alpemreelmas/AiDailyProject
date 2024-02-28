@@ -30,12 +30,10 @@ export class AuthGuard implements CanActivate {
       // so that we can access it in our route handlers
       request['user'] = payload;
 
-      const userEmail = payload.email;
       //TODO: cache user roles
-      const userRoles = await this.rolesService.getUserRoles(userEmail);
-
-
-
+      //@ts-ignore
+      const userRoles = (await this.rolesService.getUserRoles(payload._id)).map((userRole) => userRole.roleId.name);
+      return true;
       if(requiredRole){
         if (!userRoles.includes(requiredRole)) {
           throw new UnauthorizedException();

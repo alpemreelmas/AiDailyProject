@@ -1,14 +1,46 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
+import { Connection, Model, Types } from 'mongoose';
 import { Roles } from './entities/roles.schema';
+import { UserAndRoles } from './entities/userAndRoles.schema';
+import { User, UserDocument } from '../users/entities/user.schema';
+import { transaction } from 'src/helpers/transaction.helper';
 
 @Injectable()
 export class RolesService {
-    constructor(@InjectModel(Roles.name) private readonly roleModel: Model<Roles>) {}
+    constructor(
+    @InjectConnection() private readonly connection: Connection,
+    @InjectModel(Roles.name)
+    private readonly roleModel: Model<Roles>,
+    @InjectModel(UserAndRoles.name)
+    private readonly userAndRolesModel: Model<UserAndRoles>,
+    @InjectModel(User.name)
+    private UserModel: Model<UserDocument>,
+    ) {}
 
-    async getUserRoles(email: string): Promise<string[]> {
-        const roles = await this.roleModel.find({ email }).exec();
-        return roles.map(role => role.role);
+    findById(id: string) {
+        return transaction(this.connection, (session) =>
+          this.roleModel.findById(id),
+        );
+      }
+
+    async findByName(name: string) {
+        return await this.roleModel.findOne({ name }).exec();
+    }
+
+    async getUserRoles(id: Types.ObjectId) {
+        const user = await this.UserModel.findById(id);
+        if (!user) {
+            return [];
+        }
+    
+        const userRoles = await this.userAndRolesModel.find({ userId: user._id }).populate("roleId");
+
+        return userRoles;
+
+    }
+
+    removeUserRoles(userId: Types.ObjectId){
+        return this.userAndRolesModel.deleteMany({userId: userId})
     }
 }
