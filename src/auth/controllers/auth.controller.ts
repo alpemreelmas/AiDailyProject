@@ -10,13 +10,13 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { LoginDto } from './dto/login.dto';
-import { AuthService } from './auth.service';
-import { RefreshTokenDto } from './dto/refresh_token.dto';
-import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from '../dto/login.dto';
+import { AuthService } from '../services/auth.service';
+import { RefreshTokenDto } from '../dto/refresh_token.dto';
+import { RegisterDto } from '../dto/register.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { UpdateProfileDto } from './dto/updateProfile.dto';
-import { AuthGuard } from './auth.guard';
+import { UpdateProfileDto } from '../dto/updateProfile.dto';
+import { AuthGuard } from '../guards/auth.guard';
 
 @ApiTags('Auth')
 @Controller('auth')

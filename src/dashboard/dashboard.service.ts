@@ -4,12 +4,12 @@ import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from '../users/entities/user.schema';
 import { NotificationService } from 'src/notification/notification.service';
-import { UserService } from '../users/user.service';
+import { UserService } from 'src/users/services/user.service';
 import { customNotification } from 'src/notification/notifiables/customNotification.notification';
-import { RolesService } from 'src/roles/roles.service';
+import { RolesService } from 'src/users/services/roles.service';
 import { UpdateUserInfoDto } from './dto/updateUserInfo.dto';
-import { Roles, rolesDocument } from 'src/roles/entities/roles.schema';
-import { UserAndRoles, userAndRolesDocument } from 'src/roles/entities/userAndRoles.schema';
+import { Roles, rolesDocument } from 'src/users/entities/roles.schema';
+import { UserAndRoles, userAndRolesDocument } from 'src/users/entities/userRoles';
 
 @Injectable()
 export class DashboardService {

@@ -12,7 +12,7 @@ import {
 import { DailyService } from './daily.service';
 import { CreateDailyDto } from './dto/create-daily.dto';
 import { UpdateDailyDto } from './dto/update-daily.dto';
-import { AuthGuard } from '../auth/auth.guard';
+import { AuthGuard } from '../auth/guards/auth.guard';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Daily')

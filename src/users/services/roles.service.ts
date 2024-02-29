@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Connection, Model, Types } from 'mongoose';
-import { Roles } from './entities/roles.schema';
-import { UserAndRoles } from './entities/userAndRoles.schema';
-import { User, UserDocument } from '../users/entities/user.schema';
+import { Roles } from '../entities/roles.schema';
+import { UserAndRoles } from '../entities/userRoles';
+import { User, UserDocument } from '../entities/user.schema';
 import { transaction } from 'src/helpers/transaction.helper';
 
 @Injectable()

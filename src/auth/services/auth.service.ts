@@ -4,27 +4,27 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UserService } from '../users/user.service';
+import { UserService } from 'src/users/services/user.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { v4 as uuidv4 } from 'uuid';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { AuthToken, AuthTokenDocument } from './entities/auth_token.schema';
+import { AuthToken, AuthTokenDocument } from '../entities/auth_token.schema';
 import * as moment from 'moment';
-import { LoginDto } from './dto/login.dto';
-import { RefreshTokenDto } from './dto/refresh_token.dto';
-import { User, UserDocument } from '../users/entities/user.schema';
-import { RegisterDto } from './dto/register.dto';
-import { EmailService } from '../email/email.service';
-import { UpdateProfileDto } from './dto/updateProfile.dto';
+import { LoginDto } from '../dto/login.dto';
+import { RefreshTokenDto } from '../dto/refresh_token.dto';
+import { User, UserDocument } from '../../users/entities/user.schema';
+import { RegisterDto } from '../dto/register.dto';
+import { EmailService } from '../../email/email.service';
+import { UpdateProfileDto } from '../dto/updateProfile.dto';
 import { NotificationService } from 'src/notification/notification.service';
 import { LoggedInNotification } from 'src/notification/notifiables/loggedInNotification.notification';
 import { welcomeNotification } from 'src/notification/notifiables/welcomeNotification.notification';
 import { verificationNotification } from 'src/notification/notifiables/verificationNotification.notification';
-import { RolesService } from 'src/roles/roles.service';
-import { Roles, rolesDocument } from 'src/roles/entities/roles.schema';
-import { UserAndRoles, userAndRolesDocument } from 'src/roles/entities/userAndRoles.schema';
+import { RolesService } from 'src/users/services/roles.service';
+import { Roles, rolesDocument } from 'src/users/entities/roles.schema';
+import { UserAndRoles, userAndRolesDocument } from 'src/users/entities/userRoles';
 
 @Injectable()
 export class AuthService {
@@ -89,6 +89,8 @@ export class AuthService {
     });
 
     const role = await this.RolesModel.findOne({ name: 'user' }).exec();
+
+    if(!role) return new BadRequestException("We cannot handle this request right now.");
 
     await this.UserAndRolesModel.create({
       userId: user._id,

@@ -2,21 +2,19 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel, InjectConnection } from '@nestjs/mongoose';
 import { Model, Connection } from 'mongoose';
 import {
   ResetPassword,
   resetPasswordDocument,
-} from './entities/reset-password.schema';
-import { User, UserDocument } from '../users/entities/user.schema';
+} from '../entities/reset-password.schema';
+import { User, UserDocument } from 'src/users/entities/user.schema';
 import { v4 as uuidv4 } from 'uuid';
 import * as moment from 'moment';
-import { EmailService } from '../email/email.service';
+import { EmailService } from 'src/email/email.service';
 import * as bcrypt from 'bcrypt';
-import { publicDecrypt } from 'crypto';
-import { ResetPasswordDto } from './dto/reset-password-token.dto';
+import { ResetPasswordDto } from '../dto/reset-password-token.dto';
 import { NotificationService } from 'src/notification/notification.service';
 import { resetPasswordNotification } from 'src/notification/notifiables/resetPasswordNotification.notification';
 import { forgotPasswordNotification } from 'src/notification/notifiables/forgotPasswordNotification.notification';

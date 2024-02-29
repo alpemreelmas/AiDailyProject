@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { ResetPasswordService } from './reset-password.service';
+import { ResetPasswordService } from '../services/reset-password.service';
 import { ApiTags } from '@nestjs/swagger';
-import { ResetPasswordDto } from './dto/reset-password-token.dto';
+import { ResetPasswordDto } from '../dto/reset-password-token.dto';
 
 @ApiTags('resetPassword')
 @Controller('reset-password')

@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { RolesService } from '../roles/roles.service';
+import { RolesService } from 'src/users/services/roles.service';
 import { Reflector } from '@nestjs/core';
 
 @Injectable()
@@ -33,7 +33,6 @@ export class AuthGuard implements CanActivate {
       //TODO: cache user roles
       //@ts-ignore
       const userRoles = (await this.rolesService.getUserRoles(payload._id)).map((userRole) => userRole.roleId.name);
-      return true;
       if(requiredRole){
         if (!userRoles.includes(requiredRole)) {
           throw new UnauthorizedException();

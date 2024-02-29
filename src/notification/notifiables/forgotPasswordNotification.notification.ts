@@ -1,6 +1,6 @@
 import { INotifiable } from '../types/notifiable.interface';
 import { User } from 'src/users/entities/user.schema';
-import { ResetPassword } from 'src/reset-password/entities/reset-password.schema';
+import { ResetPassword } from 'src/auth/entities/reset-password.schema';
 import { join } from 'path';
 import { Injectable } from '@nestjs/common';
 import * as Bull from 'bull';
