@@ -20,6 +20,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { RolesService } from './users/services/roles.service';
+import { ChatGptAiModule } from './chat-gpt-ai/chat-gpt-ai.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { RolesService } from './users/services/roles.service';
     DailyModule,
     NotificationModule,
     DashboardModule,
+    ChatGptAiModule,
   ],
   controllers: [AppController, AuthController, UserController],
   providers: [

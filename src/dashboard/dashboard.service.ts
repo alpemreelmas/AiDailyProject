@@ -10,6 +10,8 @@ import { RolesService } from 'src/users/services/roles.service';
 import { UpdateUserInfoDto } from './dto/updateUserInfo.dto';
 import { Roles, rolesDocument } from 'src/users/entities/roles.schema';
 import { UserAndRoles, userAndRolesDocument } from 'src/users/entities/userRoles';
+import { Daily, DailyDocument } from 'src/daily/entities/daily.entity';
+import { DailyService } from 'src/daily/daily.service';
 
 @Injectable()
 export class DashboardService {
@@ -17,11 +19,18 @@ export class DashboardService {
         private rolesService: RolesService,
         @InjectModel(Roles.name)
         private RolesModel: Model<rolesDocument>,
+
+        /*private dailyService: DailyService,
+        @InjectModel(Daily.name)
+        private DailyModel: Model<DailyDocument>,*/
+
         @InjectModel(UserAndRoles.name)
         private UserAndRolesModel: Model<userAndRolesDocument>,
+
         private userService: UserService,
         @InjectModel(User.name)
         private UserModel: Model<UserDocument>,
+
         private notificationService: NotificationService,
       ) {}
     async customNotification(customNotificationSenderDto: CustomNotificationSenderDto){
@@ -67,8 +76,6 @@ export class DashboardService {
             name: UpdateUserInfoDto.name, 
             emailVerifiedAt: UpdateUserInfoDto.emailVerifiedAt
         });
-
-        // TODO: update user data
     }
 
 

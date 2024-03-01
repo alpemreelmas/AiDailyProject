@@ -49,4 +49,6 @@ export class DashboardController {
     updateUserInfo(@Param('id') id: Types.ObjectId, @Body() UpdateUserInfoDto: UpdateUserInfoDto ){
       return this.DashboardService.updateUserInfo(id, UpdateUserInfoDto);
     }
+
+
 }
