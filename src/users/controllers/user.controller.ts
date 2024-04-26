@@ -33,20 +33,20 @@ export class UserController {
 
   @HttpCode(HttpStatus.OK)
   @Get(':id')
-  findOne(@Param('id') id: Types.ObjectId) {
+  findOne(@Param('id') id: string) {
     return this.UserService.findById(id);
   }
   @HttpCode(HttpStatus.OK)
   @Patch(':id')
   update(
-    @Param('id') id: Types.ObjectId,
+    @Param('id') id: string,
     @Body() updateAuthDto: UpdateUserDto,
   ) {
     return this.UserService.update(id, updateAuthDto);
   }
   @HttpCode(HttpStatus.OK)
   @Delete(':id')
-  remove(@Param('id') id: Types.ObjectId) {
+  remove(@Param('id') id: string) {
     return this.UserService.remove(id);
   }
 }

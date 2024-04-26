@@ -1,11 +1,4 @@
-import {
-    Body,
-    Controller,
-    Get,
-    Param,
-    Post,
-    UseGuards,
-  } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { RequiredRole } from 'src/auth/decorators/requiredRole.decorator';
@@ -19,36 +12,44 @@ import { Types } from 'mongoose';
 @Controller('dashboard')
 @UseGuards(AuthGuard)
 export class DashboardController {
-    constructor(private DashboardService: DashboardService, private userService: UserService) {}
+  constructor(
+    private DashboardService: DashboardService,
+    private userService: UserService,
+  ) {}
 
-    @Get()
-    getDashboard(): string {
-      return 'Dashboard content';
-    }
+  @Get()
+  getDashboard(): string {
+    return 'Dashboard content';
+  }
 
-    @RequiredRole('admin')
-    @Post('/custom-notification')
-    customNotificationSender(@Body() customNotificationSenderDto: CustomNotificationSenderDto){
-        return this.DashboardService.customNotification(customNotificationSenderDto)
-    }
+  @RequiredRole('admin')
+  @Post('/custom-notification')
+  customNotificationSender(
+    @Body() customNotificationSenderDto: CustomNotificationSenderDto,
+  ) {
+    return this.DashboardService.customNotification(
+      customNotificationSenderDto,
+    );
+  }
 
-    @RequiredRole('admin')
-    @Get('/users')
-    async listUsers(){
-      return await this.DashboardService.listUsers();
-    }
+  @RequiredRole('admin')
+  @Get('/users')
+  async listUsers() {
+    return await this.DashboardService.listUsers();
+  }
 
-    @RequiredRole('admin')
-    @Get('/user/:id')
-    getUserInfo(@Param('id') id: string){
-      return this.DashboardService.getUserInfo(id);
-    }
+  @RequiredRole('admin')
+  @Get('/user/:id')
+  getUserInfo(@Param('id') id: string) {
+    return this.DashboardService.getUserInfo(id);
+  }
 
-    @RequiredRole('admin')
-    @Post('/user/:id')
-    updateUserInfo(@Param('id') id: Types.ObjectId, @Body() UpdateUserInfoDto: UpdateUserInfoDto ){
-      return this.DashboardService.updateUserInfo(id, UpdateUserInfoDto);
-    }
-
-
+  @RequiredRole('admin')
+  @Post('/user/:id')
+  updateUserInfo(
+    @Param('id') id: string,
+    @Body() UpdateUserInfoDto: UpdateUserInfoDto,
+  ) {
+    return this.DashboardService.updateUserInfo(id, UpdateUserInfoDto);
+  }
 }

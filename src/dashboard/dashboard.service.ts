@@ -9,74 +9,77 @@ import { customNotification } from 'src/notification/notifiables/customNotificat
 import { RolesService } from 'src/users/services/roles.service';
 import { UpdateUserInfoDto } from './dto/updateUserInfo.dto';
 import { Roles, rolesDocument } from 'src/users/entities/roles.schema';
-import { UserAndRoles, userAndRolesDocument } from 'src/users/entities/userRoles';
+import {
+  UserAndRoles,
+  userAndRolesDocument,
+} from 'src/users/entities/userRoles';
 import { Daily, DailyDocument } from 'src/daily/entities/daily.entity';
 import { DailyService } from 'src/daily/daily.service';
 
 @Injectable()
 export class DashboardService {
-    constructor(
-        private rolesService: RolesService,
-        @InjectModel(Roles.name)
-        private RolesModel: Model<rolesDocument>,
+  constructor(
+    private rolesService: RolesService,
+    @InjectModel(Roles.name)
+    private RolesModel: Model<rolesDocument>,
 
-        /*private dailyService: DailyService,
+    /*private dailyService: DailyService,
         @InjectModel(Daily.name)
         private DailyModel: Model<DailyDocument>,*/
 
-        @InjectModel(UserAndRoles.name)
-        private UserAndRolesModel: Model<userAndRolesDocument>,
+    @InjectModel(UserAndRoles.name)
+    private UserAndRolesModel: Model<userAndRolesDocument>,
 
-        private userService: UserService,
-        @InjectModel(User.name)
-        private UserModel: Model<UserDocument>,
+    private userService: UserService,
+    @InjectModel(User.name)
+    private UserModel: Model<UserDocument>,
 
-        private notificationService: NotificationService,
-      ) {}
-    async customNotification(customNotificationSenderDto: CustomNotificationSenderDto){
-        const users = await this.userService.findAll();
+    private notificationService: NotificationService,
+  ) {}
+  async customNotification(
+    customNotificationSenderDto: CustomNotificationSenderDto,
+  ) {
+    const users = await this.userService.findAll();
 
-        this.notificationService.sendNotification(new customNotification(customNotificationSenderDto, users));
+    this.notificationService.sendNotification(
+      new customNotification(customNotificationSenderDto, users),
+    );
+  }
+
+  async listUsers() {
+    return await this.userService.findAllWithRoles();
+  }
+
+  async getUserInfo(id: string) {
+    const user = await this.userService.findByIdWithRole(id);
+
+    return user;
+  }
+
+  async updateUserInfo(id: string, UpdateUserInfoDto: UpdateUserInfoDto) {
+    const user = await this.userService.findById(id);
+
+    if (!user) return new NotFoundException("We couldn't find user.");
+
+    await this.rolesService.removeUserRoles(id);
+
+    const roles = UpdateUserInfoDto.role;
+
+    for (const roleId of roles) {
+      const role = await this.rolesService.findById(roleId);
+      if (!role) {
+        throw new NotFoundException('Role not found');
+      }
+
+      await this.UserAndRolesModel.create({
+        userId: user._id,
+        roleId: role._id,
+      });
     }
 
-    async listUsers(){
-        return await this.userService.findAllWithRoles();
-    }
-    
-    async getUserInfo(id: string){
-        const user = await this.userService.findByIdWithRole(id);
-
-        return user
-    }
-
-    async updateUserInfo(id: Types.ObjectId, UpdateUserInfoDto: UpdateUserInfoDto){
-
-        const user = await this.userService.findById(id);
-    
-        if(!user) return new NotFoundException("We couldn't find user.")
-
-        await this.rolesService.removeUserRoles(id)
-
-        const roles = UpdateUserInfoDto.role;
-
-
-        for (const roleId of roles) {
-            const role = await this.rolesService.findById(roleId);
-            if (!role) {
-                throw new NotFoundException("Role not found");
-            }
-
-            await this.UserAndRolesModel.create({
-                userId: user._id,
-                roleId: role._id,
-              });
-        }
-
-        await this.UserModel.findByIdAndUpdate(id, { 
-            name: UpdateUserInfoDto.name, 
-            emailVerifiedAt: UpdateUserInfoDto.emailVerifiedAt
-        });
-    }
-
-
+    await this.UserModel.findByIdAndUpdate(id, {
+      name: UpdateUserInfoDto.name,
+      emailVerifiedAt: UpdateUserInfoDto.emailVerifiedAt,
+    });
+  }
 }

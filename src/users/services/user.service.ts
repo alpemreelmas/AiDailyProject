@@ -6,14 +6,18 @@ import { User, UserDocument } from 'src/users/entities/user.schema';
 import { Model, Types, Connection } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { transaction } from 'src/helpers/transaction.helper';
-import { UserAndRoles, userAndRolesDocument } from 'src/users/entities/userRoles';
+import {
+  UserAndRoles,
+  userAndRolesDocument,
+} from 'src/users/entities/userRoles';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectConnection() private readonly connection: Connection,
     @InjectModel(User.name) private UserModel: Model<UserDocument>,
-    @InjectModel(UserAndRoles.name) private UserAndRolesModel: Model<userAndRolesDocument>,
+    @InjectModel(UserAndRoles.name)
+    private UserAndRolesModel: Model<userAndRolesDocument>,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -33,27 +37,27 @@ export class UserService {
     return transaction(this.connection, (session) => this.UserModel.find());
   }
 
-  findAllWithRoles(){
-    return this.UserAndRolesModel.find().populate(["userId","roleId"])
+  findAllWithRoles() {
+    return this.UserAndRolesModel.find().populate(['userId', 'roleId']);
   }
 
-  findById(id: Types.ObjectId) {
+  findById(id: string) {
     return transaction(this.connection, (session) =>
       this.UserModel.findById(id),
     );
   }
 
-  findByIdWithRole(id:string){
+  findByIdWithRole(id: string) {
     return transaction(this.connection, (session) =>
-    this.UserAndRolesModel.find({userId: id}).populate("roleId"),
-  );
+      this.UserAndRolesModel.find({ userId: id }).populate('roleId'),
+    );
   }
 
   async findByEmail(email: string): Promise<User> {
     return await this.UserModel.findOne({ email }).exec();
   }
 
-  update(id: Types.ObjectId, updateUserDto: UpdateUserDto) {
+  update(id: string, updateUserDto: UpdateUserDto) {
     return transaction(this.connection, (session) => {
       if (updateUserDto.password) {
         updateUserDto.password = bcrypt.hashSync(updateUserDto.password, 10);
@@ -62,14 +66,18 @@ export class UserService {
     });
   }
 
-  async updateResetToken(userId: Types.ObjectId, resetToken: string, resetTokenExpiresAt: Date): Promise<void> {
+  async updateResetToken(
+    userId: string,
+    resetToken: string,
+    resetTokenExpiresAt: Date,
+  ): Promise<void> {
     await this.UserModel.findByIdAndUpdate(userId, {
       resetToken,
       resetTokenExpiresAt,
     });
   }
 
-  remove(id: Types.ObjectId) {
+  remove(id: string) {
     return transaction(this.connection, (session) =>
       this.UserModel.findByIdAndDelete(id),
     );
