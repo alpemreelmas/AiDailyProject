@@ -24,7 +24,10 @@ import { welcomeNotification } from 'src/notification/notifiables/welcomeNotific
 import { verificationNotification } from 'src/notification/notifiables/verificationNotification.notification';
 import { RolesService } from 'src/users/services/roles.service';
 import { Roles, rolesDocument } from 'src/users/entities/roles.schema';
-import { UserAndRoles, userAndRolesDocument } from 'src/users/entities/userRoles';
+import {
+  UserAndRoles,
+  userAndRolesDocument,
+} from 'src/users/entities/userRoles';
 
 @Injectable()
 export class AuthService {
@@ -52,13 +55,15 @@ export class AuthService {
       );
     }
     if (!bcrypt.compareSync(loginDto.password, user.password)) {
-      throw new UnauthorizedException();
+      throw new BadRequestException(
+        "We couldn't find this credentials in our system",
+      );
     }
     const newUser = { sub: user._id, name: user.name, email: user.email };
     const hashedRefreshToken = await this.createRefreshToken(user._id);
 
     this.notificationService.sendNotification(new LoggedInNotification(user));
-    
+
     return {
       ...newUser,
       access_token: await this.jwtService.signAsync(newUser, {
@@ -90,7 +95,8 @@ export class AuthService {
 
     const role = await this.RolesModel.findOne({ name: 'user' }).exec();
 
-    if(!role) return new BadRequestException("We cannot handle this request right now.");
+    if (!role)
+      throw new BadRequestException('We cannot handle this request right now.');
 
     await this.UserAndRolesModel.create({
       userId: user._id,
@@ -101,7 +107,9 @@ export class AuthService {
     const hashedRefreshToken = await this.createRefreshToken(user._id);
 
     this.notificationService.sendNotification(new welcomeNotification(user));
-    this.notificationService.sendNotification(new verificationNotification(user));
+    this.notificationService.sendNotification(
+      new verificationNotification(user),
+    );
 
     return {
       ...newUser,
@@ -154,7 +162,9 @@ export class AuthService {
       { returnDocument: 'after' },
     );
 
-    this.notificationService.sendNotification(new verificationNotification(user));
+    this.notificationService.sendNotification(
+      new verificationNotification(user),
+    );
   }
 
   // TODO: Change here to jwt token

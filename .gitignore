@@ -3,6 +3,7 @@
 /node_modules
 docker-compose.yaml
 /mongodb-backup
+/redisinsight
 
 # Logs
 logs

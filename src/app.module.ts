@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './users/user.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthService } from './auth/services/auth.service';
 import { AuthModule } from './auth/auth.module';
 import { AuthController } from './auth/controllers/auth.controller';
@@ -21,6 +21,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { RolesService } from './users/services/roles.service';
 import { ChatGptAiModule } from './chat-gpt-ai/chat-gpt-ai.module';
+import { RedisService } from './redis.service';
 
 @Module({
   imports: [
@@ -36,16 +37,20 @@ import { ChatGptAiModule } from './chat-gpt-ai/chat-gpt-ai.module';
         limit: 60,
       },
     ]),
-    BullModule.forRoot({
-      redis: {
-        host: process.env.REDIS_HOST,
-        port: Number(process.env.REDIS_PORT),
-      },
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        redis: {
+          host: configService.get('REDIS_HOST'),
+          port: configService.get('REDIS_PORT'),
+        },
+      }),
+      inject: [ConfigService],
     }),
-    BullModule.registerQueue({ name: 'email' }),
     UserModule,
     AuthModule,
     EmailModule,
+    BullModule.registerQueue({ name: 'email' }),
     DailyModule,
     NotificationModule,
     DashboardModule,
@@ -63,6 +68,7 @@ import { ChatGptAiModule } from './chat-gpt-ai/chat-gpt-ai.module';
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
+    RedisService,
   ],
 })
 export class AppModule {

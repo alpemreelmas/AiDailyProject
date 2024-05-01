@@ -43,14 +43,15 @@
     "moment": "^2.29.4",
     "mongoose": "^7.2.1",
     "nest-winston": "^1.9.2",
+    "nestjs-seeder": "^0.3.2",
     "openai": "^4.28.4",
+    "redis": "^4.6.13",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
     "uuid": "^9.0.0",
     "winston": "^3.9.0",
-    "winston-daily-rotate-file": "^4.7.1",
-    "nestjs-seeder": "^0.3.2"
+    "winston-daily-rotate-file": "^4.7.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",

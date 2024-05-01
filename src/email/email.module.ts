@@ -7,19 +7,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EmailProcessor } from './email.processor';
 import { BullModule } from '@nestjs/bull';
 
-
 @Module({
   imports: [
-    BullModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        redis: {
-          host: configService.get("REDIS_HOST"),
-          port: configService.get("REDIS_PORT"),
-        },
-        }),
-        inject: [ConfigService]
-    }),
     BullModule.registerQueue({
       name: 'email',
     }),
@@ -27,16 +16,16 @@ import { BullModule } from '@nestjs/bull';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         transport: {
-          host: configService.get("MAIL_HOST"),
-          port: configService.get<Number>("MAIL_PORT"),
-          secure: configService.get("MAIL_SECURE") == "false" ? false : true,
+          host: configService.get('MAIL_HOST'),
+          port: configService.get<number>('MAIL_PORT'),
+          secure: configService.get('MAIL_SECURE') == 'false' ? false : true,
           auth: {
-            user: configService.get("MAIL_USERNAME"),
-            pass: configService.get("MAIL_PASSWORD"),
+            user: configService.get('MAIL_USERNAME'),
+            pass: configService.get('MAIL_PASSWORD'),
           },
         },
         defaults: {
-          from: configService.get("MAIL_DEFAULT_FROM"),
+          from: configService.get('MAIL_DEFAULT_FROM'),
         },
         template: {
           dir: __dirname + '/templates',
@@ -46,7 +35,7 @@ import { BullModule } from '@nestjs/bull';
           },
         },
       }),
-      inject: [ConfigService]
+      inject: [ConfigService],
     }),
   ],
   providers: [EmailService, EmailProcessor],

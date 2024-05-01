@@ -8,10 +8,7 @@ import { INotifiable } from './types/notifiable.interface';
 export class NotificationService {
   public notificationServices: Map<string, INotificationService>;
   public channels: Map<string, INotificationService>;
-  constructor(
-    private notificationFactory: NotificationFactory,
-    private configService: ConfigService,
-  ) {
+  constructor(private notificationFactory: NotificationFactory) {
     this.notificationServices = this.notificationFactory.getInstances();
   }
 

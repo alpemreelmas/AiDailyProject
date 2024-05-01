@@ -6,6 +6,4 @@ import { join } from 'path';
 @Injectable()
 export class EmailService {
   constructor(@InjectQueue('email') private emailQueue: Queue) {}
-
-  
 }
