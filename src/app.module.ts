@@ -27,13 +27,21 @@ import { ChatGptAiModule } from './chat-gpt-ai/chat-gpt-ai.module';
     ConfigModule.forRoot({
       isGlobal: true,
       load: [notificationConfig],
-      envFilePath: '.env'
+      envFilePath: '.env',
     }),
     MongooseModule.forRoot(process.env.MONGODB_URI),
-    ThrottlerModule.forRoot([{
+    ThrottlerModule.forRoot([
+      {
         ttl: 60000,
-      limit: 60,
-    }]),
+        limit: 60,
+      },
+    ]),
+    BullModule.forRoot({
+      redis: {
+        host: process.env.REDIS_HOST,
+        port: Number(process.env.REDIS_PORT),
+      },
+    }),
     BullModule.registerQueue({ name: 'email' }),
     UserModule,
     AuthModule,
