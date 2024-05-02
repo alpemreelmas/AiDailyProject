@@ -5,7 +5,7 @@
   "compilerOptions": {
     "assets": [{
       "include": "**/*.ejs",
-      "outDir": "dist/src",
+      "outDir": "dist/assets",
       "watchAssets": true
     }]
   }

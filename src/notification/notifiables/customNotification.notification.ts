@@ -17,18 +17,21 @@ export class customNotification implements INotifiable {
   }
 
   toMail() {
-    this.users.forEach(user => {
+    this.users.forEach((user) => {
       this.emailQueue.add('sendEmail', {
         to: user.email,
         subject: this.notificationParams.subject,
-        template: join(__dirname, '../../email/templates' , 'notifications/customNotification.ejs'),
+        template: join(
+          __dirname,
+          '/dist/assets/email/templates',
+          'notifications/customNotification.ejs',
+        ),
         context: {
           user: user.name,
           title: this.notificationParams.title,
           content: this.notificationParams.content,
         },
-      });  
+      });
     });
-    
   }
 }

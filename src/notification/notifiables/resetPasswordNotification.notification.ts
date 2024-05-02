@@ -16,7 +16,11 @@ export class resetPasswordNotification implements INotifiable {
     this.emailQueue.add('sendEmail', {
       to: this.user.email,
       subject: 'Password changed successfully',
-      template: join(__dirname, '../../email/templates' , 'notifications/resetPasswordNotification.ejs'),
+      template: join(
+        __dirname,
+        '/dist/assets/email/templates',
+        'notifications/resetPasswordNotification.ejs',
+      ),
       context: {
         user: this.user.name,
       },

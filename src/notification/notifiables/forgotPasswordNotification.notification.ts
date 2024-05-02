@@ -19,10 +19,16 @@ export class forgotPasswordNotification implements INotifiable {
     this.emailQueue.add('sendEmail', {
       to: this.user.email,
       subject: 'Forgot password',
-      template: join(__dirname, '../../email/templates' , 'notifications/forgotPasswordNotification.ejs'),
+      template: join(
+        __dirname,
+        '/dist/assets/email/templates',
+        'notifications/forgotPasswordNotification.ejs',
+      ),
       context: {
         user: this.user.name,
-        resetLink: process.env.SITE_URL + `reset-password/reset?token=${this.resetPassword.resetToken}`,
+        resetLink:
+          process.env.SITE_URL +
+          `reset-password/reset?token=${this.resetPassword.resetToken}`,
       },
     });
   }

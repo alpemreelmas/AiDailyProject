@@ -16,10 +16,16 @@ export class verificationNotification implements INotifiable {
     this.emailQueue.add('sendEmail', {
       to: this.user.email,
       subject: 'Verification mail',
-      template: join(__dirname, '../../email/templates' , 'notifications/emailVerificationNotification.ejs'),
+      template: join(
+        __dirname,
+        '/dist/assets/email/templates',
+        'notifications/emailVerificationNotification.ejs',
+      ),
       context: {
         user: this.user.name,
-        verificationLink: process.env.SITE_URL + `auth/verify?token=${this.user.verificationToken}`,
+        verificationLink:
+          process.env.SITE_URL +
+          `auth/verify?token=${this.user.verificationToken}`,
       },
     });
   }

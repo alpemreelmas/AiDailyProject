@@ -4,15 +4,23 @@ import { AuthGuard } from './auth/guards/auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { NotificationService } from './notification/notification.service';
 import { RedisService } from './redis.service';
+import { join } from 'path';
+import * as Bull from 'bull';
+import { InjectQueue } from '@nestjs/bull';
 
 @ApiBearerAuth()
 @Controller()
 export class AppController {
+  private user;
   constructor(
-    private readonly appService: AppService,
-    private notificationService: NotificationService,
-    private readonly redisService: RedisService,
-  ) {}
+    private redisService: RedisService,
+    @InjectQueue('email') private emailQueue,
+  ) {
+    this.user = {
+      email: 'elmasalpemre@gmail.com',
+      name: 'Alp Emre Elmas,',
+    };
+  }
 
   @Get()
   @UseGuards(AuthGuard)
@@ -21,8 +29,19 @@ export class AppController {
   }
 
   @Get('/test')
-  getHi(): string {
-    return 'ok';
+  getHi() {
+    return this.emailQueue.add('sendEmail', {
+      to: this.user.email,
+      subject: 'New device logged in with your account.',
+      template: join(
+        __dirname,
+        '/assets/email/templates',
+        'notifications/newLoggedInNotification.ejs',
+      ),
+      context: {
+        user: this.user.name,
+      },
+    });
   }
 
   @Get('redis-status')

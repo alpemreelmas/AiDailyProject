@@ -18,7 +18,7 @@ export class LoggedInNotification implements INotifiable {
       subject: 'New device logged in with your account.',
       template: join(
         __dirname,
-        '../../email/templates',
+        './app/dist/assets/email/templates',
         'notifications/newLoggedInNotification.ejs',
       ),
       context: {

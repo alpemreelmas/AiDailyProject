@@ -16,7 +16,11 @@ export class welcomeNotification implements INotifiable {
     this.emailQueue.add('sendEmail', {
       to: this.user.email,
       subject: 'Welcome to AiDaily',
-      template: join(__dirname, '../../email/templates' , 'notifications/welcomeNotification.ejs'),
+      template: join(
+        __dirname,
+        '/dist/assets/email/templates',
+        'notifications/welcomeNotification.ejs',
+      ),
       context: {
         user: this.user.name,
       },

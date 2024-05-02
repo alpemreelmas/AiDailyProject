@@ -23,6 +23,9 @@
     "seed:refresh": "node ./dist/src/seeder --refresh"
   },
   "dependencies": {
+    "@bull-board/api": "^5.17.0",
+    "@bull-board/express": "^5.17.0",
+    "@bull-board/nestjs": "^5.17.0",
     "@nestjs-modules/mailer": "^1.10.3",
     "@nestjs/bull": "^10.0.1",
     "@nestjs/common": "^9.0.0",

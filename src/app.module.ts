@@ -22,6 +22,10 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { RolesService } from './users/services/roles.service';
 import { ChatGptAiModule } from './chat-gpt-ai/chat-gpt-ai.module';
 import { RedisService } from './redis.service';
+import { BullBoardModule } from '@bull-board/nestjs';
+import { ExpressAdapter } from '@bull-board/express';
+import { BullAdapter } from '@bull-board/api/bullAdapter';
+import { EmailProcessor } from './email/email.processor';
 
 @Module({
   imports: [
@@ -47,10 +51,20 @@ import { RedisService } from './redis.service';
       }),
       inject: [ConfigService],
     }),
+    BullBoardModule.forRoot({
+      route: '/queues',
+      adapter: ExpressAdapter,
+    }),
+    BullBoardModule.forFeature({
+      name: 'email',
+      adapter: BullAdapter,
+    }),
     UserModule,
     AuthModule,
     EmailModule,
-    BullModule.registerQueue({ name: 'email' }),
+    BullModule.registerQueue({
+      name: 'email',
+    }),
     DailyModule,
     NotificationModule,
     DashboardModule,
