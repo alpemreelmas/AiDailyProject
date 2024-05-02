@@ -28,6 +28,7 @@ import {
   UserAndRoles,
   userAndRolesDocument,
 } from 'src/users/entities/userRoles';
+import { InjectQueue } from '@nestjs/bull';
 
 @Injectable()
 export class AuthService {
@@ -44,7 +45,7 @@ export class AuthService {
     private notificationService: NotificationService,
     @InjectModel(Roles.name)
     private RolesModel: Model<rolesDocument>,
-    private rolesService: RolesService,
+    @InjectQueue('email') private emailQueue,
   ) {}
 
   async login(loginDto: LoginDto): Promise<any> {
@@ -62,7 +63,9 @@ export class AuthService {
     const newUser = { sub: user._id, name: user.name, email: user.email };
     const hashedRefreshToken = await this.createRefreshToken(user._id);
 
-    this.notificationService.sendNotification(new LoggedInNotification(user));
+    this.notificationService.sendNotification(
+      new LoggedInNotification(user, this.emailQueue),
+    );
 
     return {
       ...newUser,
@@ -106,9 +109,11 @@ export class AuthService {
     const newUser = { sub: user._id, name: user.name, email: user.email };
     const hashedRefreshToken = await this.createRefreshToken(user._id);
 
-    this.notificationService.sendNotification(new welcomeNotification(user));
     this.notificationService.sendNotification(
-      new verificationNotification(user),
+      new welcomeNotification(user, this.emailQueue),
+    );
+    this.notificationService.sendNotification(
+      new verificationNotification(user, this.emailQueue),
     );
 
     return {

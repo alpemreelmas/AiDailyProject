@@ -2,15 +2,10 @@ import { INotifiable } from '../types/notifiable.interface';
 import { User } from 'src/users/entities/user.schema';
 import { join } from 'path';
 import { Injectable } from '@nestjs/common';
-import * as Bull from 'bull';
 
 @Injectable()
 export class LoggedInNotification implements INotifiable {
-  private emailQueue: Bull.Queue;
-  constructor(public user: User) {
-    this.emailQueue = new Bull('email');
-    this.user = user;
-  }
+  constructor(public user: User, private emailQueue?) {}
 
   toMail() {
     this.emailQueue.add('sendEmail', {
@@ -18,7 +13,7 @@ export class LoggedInNotification implements INotifiable {
       subject: 'New device logged in with your account.',
       template: join(
         __dirname,
-        './app/dist/assets/email/templates',
+        '../../assets/email/templates',
         'notifications/newLoggedInNotification.ejs',
       ),
       context: {

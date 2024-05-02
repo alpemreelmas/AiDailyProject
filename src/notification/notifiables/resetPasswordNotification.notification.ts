@@ -3,12 +3,11 @@ import { User } from 'src/users/entities/user.schema';
 import { join } from 'path';
 import { Injectable } from '@nestjs/common';
 import * as Bull from 'bull';
+import { InjectQueue } from '@nestjs/bull';
 
 @Injectable()
 export class resetPasswordNotification implements INotifiable {
-  private emailQueue: Bull.Queue;
-  constructor(public user: User) {
-    this.emailQueue = new Bull('email');
+  constructor(public user: User, private emailQueue?) {
     this.user = user;
   }
 
@@ -18,7 +17,7 @@ export class resetPasswordNotification implements INotifiable {
       subject: 'Password changed successfully',
       template: join(
         __dirname,
-        '/dist/assets/email/templates',
+        '../../assets/email/templates',
         'notifications/resetPasswordNotification.ejs',
       ),
       context: {

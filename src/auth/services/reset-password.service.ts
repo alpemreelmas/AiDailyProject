@@ -29,7 +29,6 @@ export class ResetPasswordService {
     @InjectModel(User.name)
     private UserModel: Model<UserDocument>,
 
-    private emailService: EmailService,
     private notificationService: NotificationService,
   ) {}
 
@@ -53,7 +52,9 @@ export class ResetPasswordService {
       resetTokenExpiresAt: newResetTokenExpiresAt,
     });
 
-    this.notificationService.sendNotification(new forgotPasswordNotification(user, resetPassword));
+    this.notificationService.sendNotification(
+      new forgotPasswordNotification(user, resetPassword),
+    );
   }
 
   async resetPassword(resetPasswordDto: ResetPasswordDto, resetToken: string) {
@@ -86,7 +87,9 @@ export class ResetPasswordService {
       { email: resetPasswordDto.email },
       { password: bcrypt.hashSync(resetPasswordDto.newPassword, 10) },
     );
-    this.notificationService.sendNotification(new resetPasswordNotification(user));
+    this.notificationService.sendNotification(
+      new resetPasswordNotification(user),
+    );
     await this.ResetPasswordModel.deleteOne({ resetToken });
   }
 

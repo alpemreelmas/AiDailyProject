@@ -4,14 +4,17 @@ import { join } from 'path';
 import { Injectable } from '@nestjs/common';
 import * as Bull from 'bull';
 import { CustomNotificationSenderDto } from 'src/dashboard/dto/customNotificationSender.dto';
+import { InjectQueue } from '@nestjs/bull';
 
 @Injectable()
 export class customNotification implements INotifiable {
-  private emailQueue: Bull.Queue;
   public notificationParams: CustomNotificationSenderDto;
   private users: User[];
-  constructor(notificationParams: CustomNotificationSenderDto, users: User[]) {
-    this.emailQueue = new Bull('email');
+  constructor(
+    notificationParams: CustomNotificationSenderDto,
+    users: User[],
+    private emailQueue?,
+  ) {
     this.notificationParams = notificationParams;
     this.users = users;
   }
@@ -23,7 +26,7 @@ export class customNotification implements INotifiable {
         subject: this.notificationParams.subject,
         template: join(
           __dirname,
-          '/dist/assets/email/templates',
+          '../../assets/email/templates',
           'notifications/customNotification.ejs',
         ),
         context: {

@@ -25,7 +25,6 @@ import { RedisService } from './redis.service';
 import { BullBoardModule } from '@bull-board/nestjs';
 import { ExpressAdapter } from '@bull-board/express';
 import { BullAdapter } from '@bull-board/api/bullAdapter';
-import { EmailProcessor } from './email/email.processor';
 
 @Module({
   imports: [

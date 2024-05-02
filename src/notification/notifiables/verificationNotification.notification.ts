@@ -2,13 +2,11 @@ import { INotifiable } from '../types/notifiable.interface';
 import { User } from 'src/users/entities/user.schema';
 import { join } from 'path';
 import { Injectable } from '@nestjs/common';
-import * as Bull from 'bull';
+import { InjectQueue } from '@nestjs/bull';
 
 @Injectable()
 export class verificationNotification implements INotifiable {
-  private emailQueue: Bull.Queue;
-  constructor(public user: User) {
-    this.emailQueue = new Bull('email');
+  constructor(public user: User, private emailQueue?) {
     this.user = user;
   }
 
@@ -18,7 +16,7 @@ export class verificationNotification implements INotifiable {
       subject: 'Verification mail',
       template: join(
         __dirname,
-        '/dist/assets/email/templates',
+        '../../assets/email/templates',
         'notifications/emailVerificationNotification.ejs',
       ),
       context: {

@@ -19,6 +19,7 @@ import { BullModule } from '@nestjs/bull';
           host: configService.get('MAIL_HOST'),
           port: configService.get<number>('MAIL_PORT'),
           secure: configService.get('MAIL_SECURE') == 'false' ? false : true,
+          ignoreTLS: false,
           auth: {
             user: configService.get('MAIL_USERNAME'),
             pass: configService.get('MAIL_PASSWORD'),

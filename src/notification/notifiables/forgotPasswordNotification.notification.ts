@@ -3,14 +3,14 @@ import { User } from 'src/users/entities/user.schema';
 import { ResetPassword } from 'src/auth/entities/reset-password.schema';
 import { join } from 'path';
 import { Injectable } from '@nestjs/common';
-import * as Bull from 'bull';
 
 @Injectable()
 export class forgotPasswordNotification implements INotifiable {
-  private emailQueue: Bull.Queue;
-  private resetPassword: ResetPassword;
-  constructor(public user: User, resetPassword: ResetPassword) {
-    this.emailQueue = new Bull('email');
+  constructor(
+    public user: User,
+    private resetPassword: ResetPassword,
+    private emailQueue?,
+  ) {
     this.user = user;
     this.resetPassword = resetPassword;
   }
@@ -21,7 +21,7 @@ export class forgotPasswordNotification implements INotifiable {
       subject: 'Forgot password',
       template: join(
         __dirname,
-        '/dist/assets/email/templates',
+        '../../assets/email/templates',
         'notifications/forgotPasswordNotification.ejs',
       ),
       context: {
