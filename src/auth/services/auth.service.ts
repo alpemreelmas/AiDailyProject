@@ -207,7 +207,8 @@ export class AuthService {
     if (!token) {
       throw new UnauthorizedException();
     }
-    if (moment().diff(moment(token.validUntil)) < 0 || !token.isValid) {
+    console.log(moment().diff(moment(token.validUntil)));
+    if (moment(token.validUntil).diff(moment()) < 0 || !token.isValid) {
       throw new UnauthorizedException();
     }
 
