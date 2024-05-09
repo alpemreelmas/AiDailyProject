@@ -11,6 +11,8 @@ export class Daily {
   user: User;
   @Prop({ required: true })
   content: string;
+  @Prop({ required: true })
+  orderId: number;
   @Prop({ required: true, default: Date.now() })
   createdAt: Date;
   @Prop({ required: true, default: Date.now() })

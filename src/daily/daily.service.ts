@@ -13,7 +13,10 @@ export class DailyService {
     @InjectModel(Daily.name) private DailyModel: Model<DailyDocument>,
   ) {}
   async create(createDailyDto: CreateDailyDto, user: any) {
-    return await this.DailyModel.create({ ...createDailyDto, user: user.sub });
+    return await this.DailyModel.create({
+      ...createDailyDto,
+      user: user.sub,
+    });
   }
 
   async findAll(user: any) {
