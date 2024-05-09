@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDailyDto } from './dto/create-daily.dto';
 import { UpdateDailyDto } from './dto/update-daily.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -6,6 +6,7 @@ import { User, UserDocument } from '../users/entities/user.schema';
 import { Model } from 'mongoose';
 import { Daily, DailyDocument } from './entities/daily.entity';
 import { NotFoundError } from 'rxjs';
+import { OrderDailyDto } from './dto/order-daily.dto';
 
 @Injectable()
 export class DailyService {
@@ -27,6 +28,15 @@ export class DailyService {
     const res = await this.DailyModel.findOne({ user: user.sub, _id: id });
     if (!res) throw new NotFoundException("We couldn't find this daily.");
     return res;
+  }
+
+  async order(orderDailyDtos: OrderDailyDto[], user: any) {
+    orderDailyDtos.forEach(async (order) => {
+      await this.DailyModel.findOneAndUpdate(
+        { user: user.sub, _id: order.id },
+        { orderId: order.orderId },
+      );
+    });
   }
 
   async update(id: string, updateDailyDto: UpdateDailyDto, user: any) {
