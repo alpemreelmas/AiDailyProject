@@ -11,6 +11,7 @@ services:
     depends_on:
       - database
       - redis_queue
+      - redis_insight
     networks:
       - nestjs_network
   database:
