@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from '../users/user.module';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -13,6 +12,8 @@ import { NotificationService } from 'src/notification/notification.service';
 import { NotificationModule } from 'src/notification/notification.module';
 import { RolesService } from 'src/users/services/roles.service';
 import { ResetPasswordSchema } from './entities/reset-password.schema';
+import { ResetPasswordController } from './controllers/reset-password.controller';
+import { ResetPasswordService } from './services/reset-password.service';
 
 @Module({
   imports: [
@@ -20,7 +21,9 @@ import { ResetPasswordSchema } from './entities/reset-password.schema';
     MongooseModule.forFeature([
       { name: AuthToken.name, schema: AuthTokenSchema },
     ]),
-    MongooseModule.forFeature([{ name: 'ResetPassword', schema: ResetPasswordSchema }]),
+    MongooseModule.forFeature([
+      { name: 'ResetPassword', schema: ResetPasswordSchema },
+    ]),
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET_KEY,
@@ -29,10 +32,15 @@ import { ResetPasswordSchema } from './entities/reset-password.schema';
     EmailModule,
     BullModule.registerQueue({ name: 'email' }),
     NotificationModule,
-    
   ],
-  controllers: [AuthController],
-  providers: [AuthService, EmailService, NotificationService, RolesService],
+  controllers: [AuthController, ResetPasswordController],
+  providers: [
+    AuthService,
+    EmailService,
+    NotificationService,
+    RolesService,
+    ResetPasswordService,
+  ],
   exports: [MongooseModule, RolesService],
 })
 export class AuthModule {}
