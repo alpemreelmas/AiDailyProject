@@ -88,7 +88,7 @@ export class ResetPasswordService {
       { password: bcrypt.hashSync(resetPasswordDto.newPassword, 10) },
     );
     this.notificationService.sendNotification(
-      new resetPasswordNotification(user),
+      new resetPasswordNotification(user, this.emailQueue),
     );
     await this.ResetPasswordModel.deleteOne({ resetToken });
   }
