@@ -22,7 +22,6 @@ import { NotificationService } from 'src/notification/notification.service';
 import { LoggedInNotification } from 'src/notification/notifiables/loggedInNotification.notification';
 import { welcomeNotification } from 'src/notification/notifiables/welcomeNotification.notification';
 import { verificationNotification } from 'src/notification/notifiables/verificationNotification.notification';
-import { RolesService } from 'src/users/services/roles.service';
 import { Roles, rolesDocument } from 'src/users/entities/roles.schema';
 import {
   UserAndRoles,

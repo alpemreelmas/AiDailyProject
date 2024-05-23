@@ -4,7 +4,6 @@ import { join } from 'path';
 import { Injectable } from '@nestjs/common';
 import * as Bull from 'bull';
 import { CustomNotificationSenderDto } from 'src/dashboard/dto/customNotificationSender.dto';
-import { InjectQueue } from '@nestjs/bull';
 
 @Injectable()
 export class customNotification implements INotifiable {

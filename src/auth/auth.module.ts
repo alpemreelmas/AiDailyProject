@@ -41,6 +41,6 @@ import { ResetPasswordService } from './services/reset-password.service';
     RolesService,
     ResetPasswordService,
   ],
-  exports: [MongooseModule, RolesService],
+  exports: [MongooseModule, RolesService, AuthService],
 })
 export class AuthModule {}

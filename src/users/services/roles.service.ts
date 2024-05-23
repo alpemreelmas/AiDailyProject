@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
-import { Connection, Model, ObjectId, Types } from 'mongoose';
+import { Connection, Model, ObjectId } from 'mongoose';
 import { Roles } from '../entities/roles.schema';
 import { UserAndRoles } from '../entities/userRoles';
 import { User, UserDocument } from '../entities/user.schema';
@@ -28,7 +28,7 @@ export class RolesService {
     return await this.roleModel.findOne({ name }).exec();
   }
 
-  async getUserRoles(id: Types.ObjectId) {
+  async getUserRoles(id: ObjectId) {
     const user = await this.UserModel.findById(id);
     if (!user) {
       return [];
@@ -36,7 +36,8 @@ export class RolesService {
 
     const userRoles = await this.userAndRolesModel
       .find({ userId: user._id })
-      .populate('roleId');
+      .populate('roleId')
+      .exec();
 
     return userRoles;
   }

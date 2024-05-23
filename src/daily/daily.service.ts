@@ -10,9 +10,7 @@ import { OrderDailyDto } from './dto/order-daily.dto';
 
 @Injectable()
 export class DailyService {
-  constructor(
-    @InjectModel(Daily.name) private DailyModel: Model<DailyDocument>,
-  ) {}
+  constructor(@InjectModel(Daily.name) private DailyModel: typeof Model) {}
   async create(createDailyDto: CreateDailyDto, user: any) {
     return await this.DailyModel.create({
       ...createDailyDto,
@@ -21,7 +19,7 @@ export class DailyService {
   }
 
   async findAll(user: any) {
-    return this.DailyModel.find({ user: user.sub });
+    return this.DailyModel.find({ user: user.sub }).sort({ orderId: 1 }).exec();
   }
 
   async findOne(id: string, user: any) {

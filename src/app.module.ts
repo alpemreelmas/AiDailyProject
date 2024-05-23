@@ -31,7 +31,7 @@ import { BullAdapter } from '@bull-board/api/bullAdapter';
     ConfigModule.forRoot({
       isGlobal: true,
       load: [notificationConfig],
-      envFilePath: '.env',
+      envFilePath: '.env.local',
     }),
     MongooseModule.forRoot(process.env.MONGODB_URI),
     ThrottlerModule.forRoot([
