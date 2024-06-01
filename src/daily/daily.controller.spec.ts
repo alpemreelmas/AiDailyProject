@@ -36,17 +36,17 @@ describe('DailyController', () => {
   });
 
   it('should call dailyService.create with correct parameters', async () => {
-    const req = { user: { id: 1, name: 'Test User' } };
+    const req = { user: { id: 1, name: 'Test User' } } as unknown as Request;
     const createDailyDto: CreateDailyDto = {
       content: 'this is a test !',
       orderId: 1,
-    };
+    } as CreateDailyDto;
 
     const result = {};
 
     jest.spyOn(service, 'create').mockResolvedValue(result);
 
     expect(await controller.create(req, createDailyDto)).toBe(result);
-    expect(service.create).toHaveBeenCalledWith(createDailyDto, req.user);
+    expect(service.create).toHaveBeenCalledWith(createDailyDto, req['user']);
   });
 });
