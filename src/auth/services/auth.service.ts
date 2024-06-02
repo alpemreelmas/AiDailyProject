@@ -167,7 +167,7 @@ export class AuthService {
     );
 
     this.notificationService.sendNotification(
-      new verificationNotification(user),
+      new verificationNotification(user, this.emailQueue),
     );
   }
 
